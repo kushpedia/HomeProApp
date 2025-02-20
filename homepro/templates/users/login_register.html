@@ -1,0 +1,54 @@
+<h1>Registration Form</h1>
+{% if messages %}
+
+                {% for message in messages %}
+
+                <div class="alert alert--{{message.tags}}">
+                    <p class="alert__message">{{message}}</p>
+        
+                    <button class="alert__close">X</button>
+                </div>
+                
+
+                {% endfor %}
+
+        {% endif %}
+
+<div class="auth">
+    <div class="card">
+        <div class="auth__header text-center">
+        <a href="/">
+        {% comment %} <img src="{% static 'images/icon.svg' %}" alt="icon" /> {% endcomment %}
+        </a>
+        <h3>Account SignUp</h3>
+        <p>Create A New Account</p>
+    </div>
+
+    <form action="{% url 'register' %}" method="post" class="form auth__form">
+
+        {% csrf_token %}
+
+        {% for field in form %}
+        <!-- Input:Text -->
+        <div class="form__field">
+            <label for="formInput#text">{{field.label}} </label>
+            {{field}}
+            {% for error in field.errors %}
+            
+            {{error}} 
+
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+    
+        <div class="auth__actions">
+        <input class="btn btn--sub btn--lg" type="submit" value="Sign  In" />
+        </div>
+    </form>
+    <div class="auth__alternative">
+        <p>Already have an Account?</p>
+        <a href="{% url 'login' %}">Log In</a>
+    </div>
+    </div>
+</div>
