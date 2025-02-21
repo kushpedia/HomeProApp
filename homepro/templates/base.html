@@ -9,6 +9,7 @@
     <!-- Icon - IconMonster -->
     <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
     <!-- Mumble UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'uikit/styles/uikit.css' %}"/>
     <!-- Dev Search UI -->
     <link rel="stylesheet" href="{% static 'styles/app.css' %}" />
@@ -35,16 +36,15 @@
                 {% endfor %}
 
         {% endif %}
-
+                {% include 'navbar.html' %}
     {% block content%}
 
     {% endblock content%}
     
-
+    {% include 'footer.html' %}
     
 </body>
-{% comment %} <script src="{% static 'uikit/app.js' %}"></script>
-<script src="{% static 'js/main.js' %}"></script> {% endcomment %}
+
 
 </html>
 

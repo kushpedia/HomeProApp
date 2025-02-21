@@ -8,11 +8,10 @@ from django.contrib import messages
 # Create your views here.
 def homepage(request):
     return render(request, "users/userhome.html")
-    # return HttpResponse("Welcome")
+    # return HttpResponse("Welcome")  
 def userRegistration(request):
     form = CustomUserCreationForm()
-    page = "register"
-    context = {'page': page, 'form':form}
+    context = {'form':form}
     if request.method =="POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -23,7 +22,7 @@ def userRegistration(request):
             return redirect('edit-account')
         else:
             messages.error(request, "User Creation Failed.")
-    return render(request, 'users/login_register.html', context)
+    return render(request, 'users/register.html', context)
 
 # user Account:
 @login_required(login_url='login')
@@ -37,10 +36,10 @@ def userAccount(request):
 def editAccount(request):
     profile = request.user.profile
     form = ProfileForm(instance=profile)
-    uneditable_fields = ['user']
-    for field in uneditable_fields:
-        if field in form.fields:
-            form.fields[field].disabled = True
+    # uneditable_fields = ['user']
+    # for field in uneditable_fields:
+    #     if field in form.fields:
+    #         form.fields[field].disabled = True
             
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance = profile)
@@ -50,7 +49,7 @@ def editAccount(request):
                 'user' : request.user
             }
             messages.error(request, "User Updated Successfully.")
-            return redirect('homepage',context = context)
+            return redirect('homepage')
 
     context = {'form':form}
 
@@ -58,10 +57,9 @@ def editAccount(request):
 
 #Login User
 def loginUser(request):
-    page = "login"
-    context = {'page': page}
+    
     if request.user.is_authenticated:
-        return redirect('profiles')
+        return redirect('homepage')
 
 
     if request.method == 'POST':
@@ -76,8 +74,13 @@ def loginUser(request):
 
         if user is not None:
             login(request, user)
-            return redirect (request.GET['next'] if 'next' in request.GET else 'account')
+            return redirect (request.GET['next'] if 'next' in request.GET else 'homepage')
         else:
             messages.error(request, "Wrong Username OR Password!")
 
-    return render(request, 'users/login_register.html',context)
+    return render(request, 'users/login.html')
+
+def logoutUser(request):
+    logout(request)
+    messages.info(request, "User Logged Out Succesfully")
+    return redirect('login')
