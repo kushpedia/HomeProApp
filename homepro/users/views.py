@@ -5,13 +5,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import Profile
 # Create your views here.
 def homepage(request):
     return render(request, "users/userhome.html")
     # return HttpResponse("Welcome")  
 def userRegistration(request):
-    form = CustomUserCreationForm()
-    context = {'form':form}
+    form = CustomUserCreationForm()    
     if request.method =="POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -21,7 +21,8 @@ def userRegistration(request):
             login(request, user)
             return redirect('edit-account')
         else:
-            messages.error(request, "User Creation Failed.")
+            messages.error(request, "User Creation Failed. Please correct the errors below.")
+    context = {'form':form}       
     return render(request, 'users/register.html', context)
 
 # user Account:
@@ -34,20 +35,18 @@ def userAccount(request):
 # edit account
 @login_required(login_url='login')
 def editAccount(request):
-    profile = request.user.profile
+    
+    profile, created = Profile.objects.get_or_create(user=request.user)
     form = ProfileForm(instance=profile)
-    # uneditable_fields = ['user']
-    # for field in uneditable_fields:
-    #     if field in form.fields:
-    #         form.fields[field].disabled = True
+    uneditable_fields = ['user','email']
+    for field in uneditable_fields:
+        if field in form.fields:
+            form.fields[field].disabled = True
             
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance = profile)
         if form.is_valid():
             form.save()
-            context = {
-                'user' : request.user
-            }
             messages.error(request, "User Updated Successfully.")
             return redirect('homepage')
 

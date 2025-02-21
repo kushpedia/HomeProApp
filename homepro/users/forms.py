@@ -21,12 +21,7 @@ class CustomUserCreationForm(UserCreationForm):
             'password1':forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '.........'}),
             'password2':forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': '.........'}),
         }
-            
-            
-            
-            
-            
-        
+    
     def __init__(self, *args, **kwargs):
             super(CustomUserCreationForm, self).__init__(*args, **kwargs)
             # updating the field class
@@ -39,7 +34,7 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'location', 'email', 'phone', 'country']
+        fields = ['location','phone', 'country']
     def __init__(self, *args, **kwargs):
             super(ProfileForm, self).__init__(*args, **kwargs)
             # updating the field class
