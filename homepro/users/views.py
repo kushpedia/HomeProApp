@@ -9,7 +9,8 @@ from .models import Profile
 # Create your views here.
 def homepage(request):
     return render(request, "users/userhome.html")
-    # return HttpResponse("Welcome")  
+
+#user registartion
 def userRegistration(request):
     form = CustomUserCreationForm()    
     if request.method =="POST":
@@ -29,13 +30,11 @@ def userRegistration(request):
 @login_required(login_url='login')
 def userAccount(request):
     profile = request.user.profile
-
     context = {'profile': profile}
     return render(request, 'users/account.html', context)
-# edit account
+# edit account on user creation
 @login_required(login_url='login')
-def editAccount(request):
-    
+def editAccount(request):    
     profile, created = Profile.objects.get_or_create(user=request.user)
     form = ProfileForm(instance=profile)
     uneditable_fields = ['user','email']
@@ -54,6 +53,20 @@ def editAccount(request):
 
     return render(request, 'users/profile_form.html', context)
 
+
+@login_required(login_url='login')
+def editProfile(request):
+    profile = request.user.profile
+    form = ProfileForm(instance=profile)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance = profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+
+    context = {'form':form}
+
+    return render(request, 'users/profile-page.html', context)
 #Login User
 def loginUser(request):
     
@@ -73,7 +86,7 @@ def loginUser(request):
 
         if user is not None:
             login(request, user)
-            return redirect (request.GET['next'] if 'next' in request.GET else 'homepage')
+            return redirect (request.GET['next'] if 'next' in request.GET else 'profile')
         else:
             messages.error(request, "Wrong Username OR Password!")
 
@@ -83,3 +96,11 @@ def logoutUser(request):
     logout(request)
     messages.info(request, "User Logged Out Succesfully")
     return redirect('login')
+# get user profile page
+@login_required(login_url='login')
+def profile(request):
+    profile = request.user.profile
+    context = {
+        'profile': profile
+    }
+    return render(request, 'users/profile-page.html',context)

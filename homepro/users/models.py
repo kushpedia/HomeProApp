@@ -13,13 +13,21 @@ class  Profile(models.Model):
                                     upload_to='profiles/', default="profiles/user-default.png")
     location = models.CharField(max_length=200,null=True, blank=True)
     email = models.EmailField()
-    phone = models.CharField(max_length=255)    
+    phone = models.CharField(max_length=255) 
+    bio = models.TextField(null=True, blank=True) 
     country = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return (f'{self.first_name} {self.last_name} {self.user}')
+        return (f'{self.first_name} {self.last_name}')
     
+    # @property
+    # def profileImageURL(self):
+    #     try:
+    #         url = self.profile_image.url
+    #     except:
+    #         url = ''
+    #     return url
     
     
