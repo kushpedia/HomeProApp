@@ -20,9 +20,15 @@
                 </p>
                 <h2 class="text-xl font-semibold text-indigo-800 dark:text-white mb-4">Services</h2>
                 <div class="flex flex-wrap gap-2 mb-6">
-                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">Plumbing</span>
-                    
+
+                    {% for service in profile.services.all %}
+                    <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">
+                        {{service}} 
+                    </span>
+                    {% endfor %}
+                                        
                 </div>
+                <button class="bg-blue-700 text-white px-3 py-1 rounded-full text-sm">Add Services</button>
                 <h2 class="text-xl font-semibold text-indigo-800 dark:text-white mb-4">Contact Information</h2>
                 <ul class="space-y-2 text-gray-700 dark:text-gray-300">
                     <li class="flex items-center">
