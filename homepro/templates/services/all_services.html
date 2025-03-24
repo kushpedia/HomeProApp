@@ -4,7 +4,7 @@
 {% block content %}
 <section class="container mx-auto p-6">
     <h2 class="text-3xl font-bold text-center mb-6">Service Categories</h2>
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
         {% for category in categories %}
 
@@ -13,7 +13,7 @@
             <div class="">
                 
                 <a href="{% url 'single-category' category.id %}" class="flex items-center gap-4 mb-4 transition delay-50 duration-300 ease-in-out hover:-translate-y-1 hover:scale-101 hover:shadow-2xl">
-                <img src="{{category.icon.url}}" alt="John Doe" class="w-28 h-28 rounded-full object-cover">
+                <img src="{{category.icon.url}}" alt="John Doe" class="w-20 h-20 rounded-full object-cover">
                 
                 <h3 class="text-2xl font-semibold">{{category.name}}</h3>
             </a>

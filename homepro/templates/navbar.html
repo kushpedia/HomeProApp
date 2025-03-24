@@ -1,199 +1,75 @@
 {% load static %}
-
-{% comment %} <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Navbar</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between">
-                <div class="flex space-x-7">
-                    <div class="">
-                        <!-- Website Logo -->
-                        <a href="#" class="flex items-center py-4">
-                            <img src="{% static 'images/logo/logo1.svg' %}" alt="Logo" class="h-20 w-20 m-10">
-                            <span class="font-semibold text-gray-500 text-lg hidden md:flex">Home Pro </span>
-                        </a>
-                    </div>
-                    <!-- Primary Navbar items -->
-                    <div class="hidden md:flex items-center space-x-1">
-                        
-                        <a href="{% url 'homepage' %}" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">Home</a>
-                        <a href="{% url 'services' %}" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">Services</a>
-                        <a href="#" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">About</a>
-                        <a href="#" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">Contact</a>
-                    </div>
-                </div>
-                <!-- Secondary Navbar items -->
-                <div class="hidden md:flex items-center space-x-3">
+<nav class="bg-blue-100 shadow-md p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'homepage' %}" class="text-xl font-bold">
+                <img src="{% static 'images/logo/hprof.png' %}" alt="Logo" class="h-16 w-16 rounded-3xl ">
+            </a>
+            <!-- Desktop Menu -->   
+            <div class="hidden md:flex space-x-6">
+                <a href="{% url 'homepage' %}" class="hover:text-blue-600">Home</a>
+                <a href="{% url 'services' %}" class="hover:text-blue-600">Services</a>
+                <a href="#" class="hover:text-blue-600">About</a>
+                <a href="#" class="hover:text-blue-600">Contact</a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="hover:text-blue-600">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="hover:text-blue-600">Login</a>
+                <a href="{% url 'register' %}" class="hover:text-blue-600">Register</a>
+                {% endif %}
+            </div>
+            
+            <!-- Profile Dropdown -->
+            <div class="relative hidden md:block">
+                <button id="profile-btn" class="focus:outline-none">
                     {% if request.user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">Logout</a>
-                        
+                    <img src="{{ request.user.profile.profile_image.url }}" alt="Profile" class="w-10 h-10 rounded-full">
                     {% else %}
-                    <a href="{% url 'login' %}" class="py-2 px-4 text-gray-500 hover:text-gray-700 transition duration-300">Login</a>
-                    <a href="{%url 'register' %}" class="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300">Signup</a>
+                    <img src="{% static '/images/profiles/user-default.png' %}" alt="Profile" class="w-10 h-10 rounded-full">
                     {% endif %}
 
-                    
-                </div>
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button class="outline-none mobile-menu-button">
-                        <svg class="w-6 h-6 text-gray-500 hover:text-gray-700"
-                            x-show="!showMenu"
-                            fill="none"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile menu -->
-        <div class="hidden mobile-menu">
-            <ul class="">
-                <li class="active"><a href="{% url 'homepage' %}" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Home</a></li>
-                <li><a href="{% url 'services' %}" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Services</a></li>
-                <li><a href="#" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">About</a></li>
-                <li><a href="#" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Contact</a></li>
-                {% if request.user.is_authenticated %}
-                <a href="{% url 'logout' %}" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Logout</a>
-                    
-                {% else %}
-                <a href="{% url 'login' %}" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Login</a>
-                <a href="{%url 'register' %}" class="block text-sm px-2 py-4 text-gray-700 hover:bg-gray-100 transition duration-300">Signup</a>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-
-    <script>
-        // Mobile menu toggle
-        const btn = document.querySelector("button.mobile-menu-button");
-        const menu = document.querySelector(".mobile-menu");
-
-        btn.addEventListener("click", () => {
-            menu.classList.toggle("hidden");
-        });
-    </script>
-</body> {% endcomment %}
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-
-<!-- Navbar -->
-<nav class="bg-white shadow-md z-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <!-- Left Section -->
-            <div class="flex items-center space-x-4">
-                <!-- Logo -->
-                <a href="{% url 'homepage' %}" class="flex items-center py-4">
-                    <img src="{% static 'images/logo/logo1.svg' %}" alt="Logo" class="h-20 w-20 m-10 rounded-3xl ">
-                    
-                </a>
-
-                <!-- Services Dropdown -->
-
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                        Services
-                    </button>
-                    <div class="absolute hidden group-hover:block bg-white shadow-md rounded-md w-48 mt-2">
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Plumbing</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Cleaning</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Electrical</a>
-                    </div>
-                </div>
-                <a href="#" class="text-gray-700 hover:text-blue-600">How It Works</a>
-                <a href="#" class="text-gray-700 hover:text-blue-600">My Bookings</a>
-                <a href="#" class="text-gray-700 hover:text-blue-600">Messages</a>
-            </div>
-
-            <!-- Right Section -->
-            <div class="hidden md:flex items-center space-x-4">
-                <!-- Search Bar -->
-                <div class="relative">
-                    <input type="text" placeholder="Search services..."
-                        class="border rounded-md px-3 py-1.5 pl-8 text-sm focus:ring focus:ring-blue-300">
-                    <svg class="absolute left-2 top-2.5 h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1014 2.5a7.5 7.5 0 002.65 14.15z" />
-                    </svg>
-                </div>
-
-                <!-- Help -->
-                <a href="#" class="text-gray-700 hover:text-blue-600">Help</a>
-
-                <!-- Notifications -->
-                <button class="relative text-gray-700 hover:text-blue-600">
-                    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                        <path d="M13.73 21a2 2 0 01-3.46 0"></path>
-                    </svg>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-                        3
-                    </span>
                 </button>
-
-                <!-- Profile Dropdown -->
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                        Account ▼
-                    </button>
-                    <div class="absolute hidden group-hover:block bg-white shadow-md rounded-md w-48 mt-2 right-0">
-                        <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">View Profile</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Payment Methods</a>
-                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-blue-100">Order History</a>
-                        <a href="#" class="block px-4 py-2 text-red-600 hover:bg-blue-100">Logout</a>
-                    </div>
+                <div id="profile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
+                    {% if request.user.is_authenticated %}
+                    
+                    <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-200">Profile</a>
+                    <a href="" class="block px-4 py-2 hover:bg-gray-200">Settings</a>
+                    <a href="{% url 'logout' %}" class="block px-4 py-2 hover:bg-gray-200">Logout</a>
+                    {% endif %}
                 </div>
-
-                <!-- CTA: Get Started -->
-                <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    Get Started
-                </a>
             </div>
 
             <!-- Mobile Menu Button -->
-            <button id="mobile-menu-button" class="md:hidden text-gray-700">
-                ☰
+            <button id="mobile-menu-btn" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
             </button>
         </div>
-    </div>
+    </nav>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
-        <a href="#" class="block px-4 py-2 text-gray-700">Services</a>
-        <a href="#" class="block px-4 py-2 text-gray-700">How It Works</a>
-        <a href="#" class="block px-4 py-2 text-gray-700">My Bookings</a>
-        <a href="#" class="block px-4 py-2 text-gray-700">Messages</a>
-        <a href="#" class="block px-4 py-2 text-gray-700">Account</a>
-        <a href="#" class="block px-4 py-2 text-gray-700">Help</a>
-        <a href="#" class="block px-4 py-2 text-red-600">Logout</a>
+    <div id="mobile-menu" class="hidden md:hidden bg-white shadow-md p-4">
+        <a href="{% url 'homepage' %}" class="block py-2 hover:text-blue-600">Home</a>
+        <a href="{% url 'services' %}" class="block py-2 hover:text-blue-600">Services</a>
+        <a href="#" class="block py-2 hover:text-blue-600">About</a>
+        <a href="#" class="block py-2 hover:text-blue-600">Contact</a>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="block py-2 hover:text-blue-600 ml-10">Profile</a>
+        <a href="#" class="block py-2 hover:text-blue-600 ml-10">Settings</a>
+        <a href="{% url 'logout' %}" class="block py-2 hover:text-blue-600 ml-10">Logout</a>
+
+        {% else %}
+        <a href="{% url 'login' %}" class="block py-2 hover:text-blue-600 ml-10">Login</a>
+        <a href="{% url 'register' %}" class="block py-2 hover:text-blue-600 ml-10">Register</a>
+        {% endif %}
     </div>
-</nav>
 
-<script>
-    document.getElementById('mobile-menu-button').addEventListener('click', function () {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-</script>
+    <script>
+        document.getElementById('profile-btn').addEventListener('click', function() {
+            document.getElementById('profile-menu').classList.toggle('hidden');
+        });
 
-
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+    </script>
