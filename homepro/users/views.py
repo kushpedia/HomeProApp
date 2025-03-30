@@ -38,7 +38,7 @@ def userRegistration(request):
             
             # Welcome Email
             subject = "Welcome to Homepro by Kushpedia"
-            message = "Hello " + user.first_name + "!! \n" + "Welcome to Homepro!! \nThank you for visiting our website\n. We have also sent you a confirmation email, please confirm your email address. \n\nThanking You\nhenry kuria"        
+            message = "Hello " + user.first_name + "!! \n" + "Welcome to Homepro!! \nThank you for visiting our website\n. We have also sent you a confirmation email, please confirm your email address. \n\nThanking You\nHenry Kuria \nCEO @Kushpedia"        
             from_email = settings.EMAIL_HOST_USER
             to_list = [user.email]
             send_mail(subject, message, from_email, to_list, fail_silently=True)            
