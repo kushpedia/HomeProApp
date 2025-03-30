@@ -6,19 +6,11 @@
 
 <section class=" bg-white-800 min-h-screen">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="{% url 'homepage' %}" class="flex items-center   font-semibold text-gray-900 dark:text-white">
-            {% comment %} <img class="w-auto h-auto max-w-40 max-h-40 md:w-32 md:h-32" 
-            src="{% static 'images/logo/logo3.png' %}" 
-            alt="logo"> {% endcomment %}
-        
-        </a>
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <p class="block mb-2 ml-12 text-sm font-medium text-gray-900 dark:text-white">Email: {{request.user.email}}</p>
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Hello 
-                <span >{{ request.user.first_name }} </span>
-
-                <br/>Update Your Account
+                    Update Your Account
                 </h1>
                 <form  action="{% url 'edit-account' %}" method="post" enctype="multipart/form-data" class="form">
                     {% csrf_token %}
@@ -27,13 +19,37 @@
                         <div class="form__field">                           
 
                             <div>
-                                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{field.label}}</label>
-                                <input 
-                                {% comment %} type="{{ field.field.widget.input_type }}"   {% endcomment %}
-                                class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                                {% comment %} placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"  {% endcomment %}
-                                name="{{ field.name }}" 
-                                id="{{ field.id_for_label }}">
+
+                                {% if field.name in select_fields %}
+                                    <label for="{{ field.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field.label }}</label>
+                                    <select 
+                                        name="{{ field.name }}" 
+                                        id="{{ field.id_for_label }}" 
+                                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                        {% for choice in field.field.choices %}
+                                            <option value="{{ choice.0 }}" {% if field.value == choice.0 %}selected{% endif %}>
+                                                {{ choice.1 }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <label for="{{ field.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{{ field.label }}</label>
+                                    <input 
+                                        type="{{ field.field.widget.input_type }}" 
+                                        class="mb-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                        placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"  
+                                        name="{{ field.name }}" 
+                                        id="{{ field.id_for_label }}"
+                                        {% if field.name == 'email' or field.name == 'first_name' %}
+                                            value="{{ field.value|default_if_none:'' }}"
+                                        {% endif %}
+                                    >
+                                {% endif %}
+
+
+
+
+
 
                                 {% if field.errors %}
                                     <div class="text-red-500 text-sm mt-1">
@@ -44,21 +60,13 @@
                                 {% endif %}
                             </div>
                         </div>
+                        <hr>
 
 
                     {% endfor %}
 
 
-                    
-                    {% comment %} <div class="flex items-start">
-                        <div class="flex items-center h-5">
-                        <input id="terms" aria-describedby="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800" required="">
-                        </div>
-                        <div class="ml-3 text-sm">
-                        <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the <a class="font-medium text-primary-600 hover:underline dark:text-primary-500" href="#">Terms and Conditions</a></label>
-                        </div>
-                    </div> {% endcomment %}
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update Account</button>
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-5">Update Account</button>
                     
                 </form>
             

@@ -45,7 +45,7 @@ class Profile(models.Model):
     certifications = models.JSONField(blank=True, null=True)
     rating = models.FloatField(blank=True, null=True)
     reviews = models.JSONField(blank=True, null=True)
-    availability_status = models.BooleanField(default=True)
+    availability_status = models.BooleanField(default=False)
     background_check_status = models.CharField(max_length=50, blank=True, null=True)
     years_of_experience = models.IntegerField(blank=True, null=True)
     total_completed_tasks = models.IntegerField(default=0)
@@ -64,5 +64,5 @@ class Profile(models.Model):
         return f"{self.first_name} {self.last_name}".strip()
     
     def __str__(self):
-        return f"{self.full_name} ({self.role})"
+        return f"{self.full_name} Role: {self.role}"
     

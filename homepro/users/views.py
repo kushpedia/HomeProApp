@@ -10,7 +10,7 @@ from .models import Profile
 def homepage(request):
     return render(request, "users/userhome.html")
 
-#user registartion
+#user registration
 def userRegistration(request):
     form = CustomUserCreationForm()    
     if request.method =="POST":
@@ -37,10 +37,8 @@ def userAccount(request):
 def editAccount(request):    
     profile, created = Profile.objects.get_or_create(user=request.user)
     form = ProfileForm(instance=profile)
-    uneditable_fields = ['user','email']
-    for field in uneditable_fields:
-        if field in form.fields:
-            form.fields[field].disabled = True
+    select_fields = ['role','preferred_payment_method']
+    
             
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance = profile)
@@ -49,24 +47,13 @@ def editAccount(request):
             messages.error(request, "User Updated Successfully.")
             return redirect('homepage')
 
-    context = {'form':form}
+    context = {
+        'form':form,
+        'select_fields' : select_fields
+        }
 
     return render(request, 'users/profile_form.html', context)
 
-
-@login_required(login_url='login')
-def editProfile(request):
-    profile = request.user.profile
-    form = ProfileForm(instance=profile)
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance = profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
-
-    context = {'form':form}
-
-    return render(request, 'users/profile-page.html', context)
 #Login User
 def loginUser(request):
     

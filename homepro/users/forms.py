@@ -34,11 +34,17 @@ class CustomUserCreationForm(UserCreationForm):
 class ProfileForm(ModelForm):
     class Meta:
         model = Profile
-        fields = ['location','phone', 'country']
-    def __init__(self, *args, **kwargs):
-            super(ProfileForm, self).__init__(*args, **kwargs)
-            # updating the field class
-            for name, field in self.fields.items():
-                field.widget.attrs.update(
-                        {'class':'input'}
-                        )
+        fields = ['first_name','profile_image','role','preferred_payment_method']
+        labels = {
+                'first_name': 'Full Name:',  # Custom field label
+                }    
+        widgets = {
+                'first_name': forms.TextInput(attrs={'placeholder': 'Enter first name'}),
+                
+                'profile_image': forms.ClearableFileInput(attrs={'accept': 'image/*'}), 
+                'role': forms.Select(choices=Profile.ROLE_CHOICES),
+                
+                'preferred_payment_method': forms.Select(choices=Profile.PAYMENT_CHOICES),      
+                
+            }
+        
