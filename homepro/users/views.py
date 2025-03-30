@@ -26,13 +26,25 @@ def userRegistration(request):
     form = CustomUserCreationForm()    
     if request.method =="POST":
         form = CustomUserCreationForm(request.POST)
+        email = request.POST.get("email")
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "A user with this email already exists. Please use a different email.")
+            return redirect('register')
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
             user.save()
             messages.success(request, "User Created Succesfully, an activation link has been sent to you email")
             
+            # Welcome Email
+            subject = "Welcome to Homepro by Kushpedia"
+            message = "Hello " + user.first_name + "!! \n" + "Welcome to Homepro!! \nThank you for visiting our website\n. We have also sent you a confirmation email, please confirm your email address. \n\nThanking You\nhenry kuria"        
+            from_email = settings.EMAIL_HOST_USER
+            to_list = [user.email]
+            send_mail(subject, message, from_email, to_list, fail_silently=True)            
             
+            
+            # send verification email
             to_list = [user.email]
             from_email = settings.EMAIL_HOST_USER
             current_site = get_current_site(request)
