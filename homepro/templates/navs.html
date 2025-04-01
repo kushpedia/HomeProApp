@@ -1,0 +1,121 @@
+{% load static %}
+<nav class="bg-[#2E3953] border-b border-[#FFD700]/20">
+    <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div class="relative flex h-16 items-center justify-between">
+            
+            <!-- Mobile menu button -->
+            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                <button id="mobile-menu-btn" type="button" class="relative inline-flex items-center justify-center rounded-md p-2 text-[#FFD700] hover:bg-[#082A01] focus:outline-none focus:ring-2 focus:ring-[#FFD700]" aria-controls="mobile-menu" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg id="menu-icon" class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                    <svg id="close-icon" class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Logo and Navigation -->
+            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+                <div class="flex shrink-0 items-center">
+                    <img class="h-8 w-auto" src="{% static 'images/logo/hprof.png' %}" alt="HomePro Logo">
+                </div>
+                <div class="hidden sm:ml-6 sm:block">
+                    <div class="flex space-x-4">
+                        <a href="{% url 'homepage' %}" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Home</a>
+                        <a href="{% url 'services' %}" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Services</a>
+                        <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">About</a>
+                        <a href="#" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Contact</a>
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'logout' %}" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Logout</a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Login</a>
+                            <a href="{% url 'register' %}" class="rounded-md px-3 py-2 text-sm font-medium text-[#F1F1F1] hover:bg-[#082A01] hover:text-[#FFD700] transition-colors">Register</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="relative ml-4 hidden md:block">
+                <div class="relative">
+                    <input type="text" class="w-64 rounded-md bg-[#2D3953] text-[#F1F1F1] px-4 py-2 text-sm focus:ring-2 focus:ring-[#FFD700] focus:outline-none border border-[#FFD700]/30" placeholder="Search for services...">
+                    <svg class="absolute right-3 top-2.5 size-5 text-[#FFD700]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M15 10.5A4.5 4.5 0 1 1 10.5 6a4.5 4.5 0 0 1 4.5 4.5z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Profile & Notifications -->
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+                <button type="button" class="relative rounded-full p-1 text-[#FFD700] hover:text-[#FFE55C] focus:outline-none focus:ring-2 focus:ring-[#FFD700]">
+                    <span class="sr-only">View notifications</span>
+                    <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+                    </svg>
+                    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full text-white">
+                        5
+                    </span>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="relative ml-3">
+                    <button id="profile-menu-btn" type="button" class="relative flex rounded-full focus:outline-none focus:ring-2 focus:ring-[#FFD700]" aria-expanded="false">
+                        <span class="sr-only">Open user menu</span>
+                        {% if request.user.is_authenticated %}
+                            <img src="{{ request.user.profile.profile_image.url }}" alt="Profile" class="size-8 rounded-full border border-[#FFD700]">
+                        {% else %}
+                            <img src="{% static '/images/profiles/user-default.png' %}" alt="Profile" class="size-8 rounded-full border border-[#FFD700]">
+                        {% endif %}
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="profile-menu" class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-[#0A192F] shadow-lg ring-1 ring-[#FFD700]/10 py-1">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Profile</a>
+                            <a href="{% url 'edit-account' %}" class="block px-4 py-2 text-sm text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Settings</a>
+                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Logout</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden sm:hidden absolute z-10 w-full bg-[#0A192F] shadow-lg">
+        <div class="space-y-1 px-2 pt-2 pb-3">
+            <a href="{% url 'homepage' %}" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Home</a>
+            <a href="{% url 'services' %}" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Services</a>
+            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">About</a>
+            <a href="#" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Contact</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Login</a>
+                <a href="{% url 'register' %}" class="block rounded-md px-3 py-2 text-base font-medium text-[#F1F1F1] hover:bg-[#0B3D02] hover:text-[#FFD700]">Register</a>
+            {% endif %}
+            
+            <!-- Mobile Search -->
+            <div class="relative px-3 py-2">
+                <input type="text" class="w-full rounded-md bg-[#0B3D02] text-[#F1F1F1] px-4 py-2 text-sm focus:ring-2 focus:ring-[#FFD700] focus:outline-none border border-[#FFD700]/30" placeholder="Search services...">
+                <svg class="absolute right-6 top-4 size-5 text-[#FFD700]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M15 10.5A4.5 4.5 0 1 1 10.5 6a4.5 4.5 0 0 1 4.5 4.5z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+        document.getElementById('menu-icon').classList.toggle('hidden');
+        document.getElementById('close-icon').classList.toggle('hidden');
+    });
+
+    document.getElementById('profile-menu-btn').addEventListener('click', function() {
+        document.getElementById('profile-menu').classList.toggle('hidden');
+    });
+</script>

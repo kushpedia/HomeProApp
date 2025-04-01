@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 import os
 import environ
@@ -15,7 +13,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env("EMAIL_ID")
 EMAIL_HOST_PASSWORD = env("EMAIL_PASSWORD")
-
+MPESA_PASSWORD = env("MPESA_PASSWORD")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,9 +24,14 @@ SECRET_KEY = 'django-insecure-n4avwofbs=^1x_)1(7jfd=$94my-f%wc88drrwykul%2&!k*pd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1","localhost","a204-102-0-16-152.ngrok-free.app"]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://a204-102-0-16-152.ngrok-free.app",
+    "https://sandbox.safaricom.co.ke",  # Allow MPesa sandbox requests
+    "https://api.safaricom.co.ke",
+    "http://localhost:8000",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,13 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users',
     'services',
+    'payment',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',  # Ensure CSRF Middleware is included
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -72,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'homepro.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -82,7 +85,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -102,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -114,10 +115,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 
 STATIC_URL = 'static/'
 MEDIA_ROOT = '/images/'
@@ -125,7 +124,11 @@ STATICFILES_DIRS =[
     BASE_DIR / 'static'
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+
+CSRF_COOKIE_NAME= "csrftoken"
+CSRF_HEADER_NAME= "HTTP_X_CSRFTOKEN"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
