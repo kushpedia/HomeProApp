@@ -15,7 +15,9 @@
             <h2 class="text-2xl font-semibold text-[var(--navy-blue)] mb-6 pb-2 border-b border-[var(--accent-blue)]/20">
                 Available Services
             </h2>
+            {% if services %}
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                
                 {% for service in services %}
                 <div class="bg-white rounded-lg shadow-sm border border-[var(--accent-blue)]/10 p-4 hover:shadow-md transition-shadow flex flex-col">
                     <!-- Service Icon -->
@@ -42,6 +44,11 @@
                 </div>
                 {% endfor %}
             </div>
+            {% else %}
+            <div class="bg-white rounded-lg p-8 text-center">
+                <p class="text-[var(--dark-gray)]">No services available for this category</p>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Top Providers Section -->
@@ -53,7 +60,9 @@
             {% if users %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for user in users|dictsortreversed:"average_rating"|slice:":6" %}
-                <a href="{% url 'user_history' user.user.id %}" class="group">
+                {% comment %} <a href="{% url 'user_history' user.user.id %}" class="group"> {% endcomment %}
+                    <a href="">
+
                     <div class="bg-white rounded-xl shadow-md border border-[var(--accent-blue)]/20 p-6 hover:shadow-lg transition-all">
                         <div class="flex items-center gap-4 mb-4">
                             <img src="{{ user.profile_image.url }}" alt="{{ user.first_name }}" 
@@ -97,6 +106,9 @@
                                     {{ service.name }}
                                 </span>
                                 {% endfor %}
+                                {% if user.services.count > 3 %}
+                        <span class="text-xs text-[var(--dark-gray)]">+{{ user.services.count|add:"-3" }} more</span>
+                        {% endif %}
                             </div>
                         </div>
                     </div>

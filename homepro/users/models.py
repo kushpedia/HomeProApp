@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from services.models import Service
 from django.db.models import Avg
+from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -70,8 +71,9 @@ class Profile(models.Model):
         
     def __str__(self):
         return f"{self.full_name} Role: {self.role}"
-# login attempts
 
+
+# login attempts
 class LoginAttempt(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='loginattempt')
     attempts = models.IntegerField(default=0)
@@ -80,3 +82,45 @@ class LoginAttempt(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.attempts} attempts"
+
+#Ratings
+
+class Rating(models.Model):
+    RATING_CHOICES = [
+        (1, '1 - Poor'),
+        (2, '2 - Fair'),
+        (3, '3 - Good'),
+        (4, '4 - Very Good'),
+        (5, '5 - Excellent')
+    ]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    rated_user = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name='ratings_received'
+    )
+    rating_user = models.ForeignKey(
+        Profile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='ratings_given'
+    )
+    score = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        choices=RATING_CHOICES
+    )
+    comment = models.TextField(blank=True)
+    service = models.ForeignKey(
+        Service,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('rated_user', 'rating_user', 'service')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.score} stars for {self.rated_user}"
