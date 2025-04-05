@@ -1,0 +1,33 @@
+{% if services %}
+<div class="space-y-4">
+    <h3 class="font-medium text-[var(--navy-blue)]">Available Services</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for service in services %}
+        <div class="flex items-center">
+            <input 
+                type="checkbox" 
+                id="service-{{ service.id }}" 
+                name="services" 
+                value="{{ service.id }}"
+                class="h-4 w-4 text-[var(--accent-blue)] border-[var(--accent-blue)] rounded focus:ring-[var(--accent-blue)] {% if service.id in user_services %}bg-[var(--accent-blue)] cursor-not-allowed{% endif %}"
+                {% if service.id in user_services %}checked disabled{% endif %}
+            >
+            <label for="service-{{ service.id }}" class="ml-3 text-sm text-[var(--navy-blue)] {% if service.id in user_services %}opacity-75{% endif %}">
+                {{ service.name }}
+                {% if service.price %}
+                <span class="block text-xs text-[var(--dark-gray)]">${{ service.price }}</span>
+                {% endif %}
+                {% if service.id in user_services %}
+                <span class="block text-xs text-green-600">(Already registered)</span>
+                {% endif %}
+            </label>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="text-center text-[var(--dark-gray)] py-4">
+    <p>No services available for this category</p>
+</div>
+{% endif %}

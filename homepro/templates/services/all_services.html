@@ -4,94 +4,94 @@
 {% block content %}
 <section class="container mx-auto px-4 py-12">
     <div class="text-center mb-12">
-        <h2 class="text-4xl font-bold gold-text mb-4">Our Service Categories</h2>
-        <p class="text-xl text-[#F1F1F1]/80 max-w-2xl mx-auto">Trusted professionals for all your home service needs</p>
+        <h2 class="text-4xl font-bold text-[var(--navy-blue)] mb-4">Our Service Categories</h2>
+        <p class="text-xl text-[var(--dark-gray)]/80 max-w-2xl mx-auto">Trusted professionals for all your home service needs</p>
     </div>
     
     <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {% for category in categories %}
         <!-- Category Card -->
-        <div class="bg-[#082A01] rounded-xl border border-[#FFD700]/20 shadow-lg overflow-hidden hover:shadow-[0_10px_30px_-5px_rgba(255,215,0,0.3)] transition-all duration-300">
+        <div class="bg-white rounded-xl border border-[var(--accent-blue)]/20 shadow-lg overflow-hidden hover:shadow-[0_10px_30px_-5px_rgba(77,168,218,0.2)] transition-all duration-300">
             <!-- Category Header -->
             <a href="{% url 'single-category' category.id %}" class="block group">
-                <div class="p-6 flex items-center gap-4 bg-[#0B3D02] border-b border-[#FFD700]/20">
-                    <div class="w-16 h-16 rounded-full bg-[#0B3D02] border border-[#FFD700]/30 flex items-center justify-center">
+                <div class="p-6 flex items-center gap-4 bg-[var(--light-gray)] border-b border-[var(--accent-blue)]/20">
+                    <div class="w-16 h-16 rounded-full bg-white border border-[var(--accent-blue)]/30 flex items-center justify-center">
                         <img src="{{category.icon.url}}" alt="{{category.name}}" class="w-10 h-10 object-contain">
                     </div>
-                    <h3 class="text-xl font-bold text-[#F1F1F1] group-hover:text-[#FFD700] transition-colors">{{category.name}}</h3>
+                    <h3 class="text-xl font-bold text-[var(--navy-blue)] group-hover:text-[var(--accent-blue)] transition-colors">{{category.name}}</h3>
                 </div>
             </a>
             
             <!-- Top Providers -->
             <div class="p-4">
-                <h4 class="text-[#FFD700] font-medium mb-3 flex items-center gap-2">
+                <h4 class="text-[var(--accent-blue)] font-medium mb-3 flex items-center gap-2">
                     <i class="fas fa-crown text-sm"></i>
                     <span>Top Service Providers</span>
                 </h4>
                 
                 <ul class="space-y-3">
-                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[#0B3D02]/50 transition-colors">
+                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--light-gray)] transition-colors">
                         <div class="relative">
-                            <img src="{% static 'images/profiles/pp1.png' %}" alt="John Doe" class="w-12 h-12 rounded-full object-cover border border-[#FFD700]/30">
-                            <span class="absolute -bottom-1 -right-1 bg-[#FFD700] text-[#0B3D02] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                            <img src="{% static 'images/profiles/pp1.png' %}" alt="John Doe" class="w-12 h-12 rounded-full object-cover border border-[var(--accent-blue)]/30">
+                            <span class="absolute -bottom-1 -right-1 bg-[var(--accent-blue)] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">1</span>
                         </div>
                         <div class="flex-1">
-                            <p class="font-medium text-[#F1F1F1]">John Doe</p>
+                            <p class="font-medium text-[var(--navy-blue)]">John Doe</p>
                             <div class="flex items-center gap-1">
-                                <div class="flex text-[#FFD700]">
+                                <div class="flex text-[var(--accent-blue)]">
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star-half-alt text-sm"></i>
                                 </div>
-                                <span class="text-xs text-[#F1F1F1]/80">4.8 (120)</span>
+                                <span class="text-xs text-[var(--dark-gray)]/80">4.8 (120)</span>
                             </div>
                         </div>
                     </li>
                     
-                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[#0B3D02]/50 transition-colors">
+                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--light-gray)] transition-colors">
                         <div class="relative">
-                            <img src="{% static 'images/profiles/pp2.png' %}" alt="Jane Smith" class="w-12 h-12 rounded-full object-cover border border-[#FFD700]/30">
-                            <span class="absolute -bottom-1 -right-1 bg-[#FFD700] text-[#0B3D02] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">2</span>
+                            <img src="{% static 'images/profiles/pp2.png' %}" alt="Jane Smith" class="w-12 h-12 rounded-full object-cover border border-[var(--accent-blue)]/30">
+                            <span class="absolute -bottom-1 -right-1 bg-[var(--accent-blue)] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">2</span>
                         </div>
                         <div class="flex-1">
-                            <p class="font-medium text-[#F1F1F1]">Jane Smith</p>
+                            <p class="font-medium text-[var(--navy-blue)]">Jane Smith</p>
                             <div class="flex items-center gap-1">
-                                <div class="flex text-[#FFD700]">
+                                <div class="flex text-[var(--accent-blue)]">
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="far fa-star text-sm"></i>
                                 </div>
-                                <span class="text-xs text-[#F1F1F1]/80">4.5 (98)</span>
+                                <span class="text-xs text-[var(--dark-gray)]/80">4.5 (98)</span>
                             </div>
                         </div>
                     </li>
                     
-                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[#0B3D02]/50 transition-colors">
+                    <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--light-gray)] transition-colors">
                         <div class="relative">
-                            <img src="{% static 'images/profiles/pp3.png' %}" alt="Mike Ross" class="w-12 h-12 rounded-full object-cover border border-[#FFD700]/30">
-                            <span class="absolute -bottom-1 -right-1 bg-[#FFD700] text-[#0B3D02] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">3</span>
+                            <img src="{% static 'images/profiles/pp3.png' %}" alt="Mike Ross" class="w-12 h-12 rounded-full object-cover border border-[var(--accent-blue)]/30">
+                            <span class="absolute -bottom-1 -right-1 bg-[var(--accent-blue)] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">3</span>
                         </div>
                         <div class="flex-1">
-                            <p class="font-medium text-[#F1F1F1]">Mike Ross</p>
+                            <p class="font-medium text-[var(--navy-blue)]">Mike Ross</p>
                             <div class="flex items-center gap-1">
-                                <div class="flex text-[#FFD700]">
+                                <div class="flex text-[var(--accent-blue)]">
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                     <i class="fas fa-star text-sm"></i>
                                 </div>
-                                <span class="text-xs text-[#F1F1F1]/80">5.0 (75)</span>
+                                <span class="text-xs text-[var(--dark-gray)]/80">5.0 (75)</span>
                             </div>
                         </div>
                     </li>
                 </ul>
                 
-                <a href="{% url 'single-category' category.id %}" class="mt-4 inline-flex items-center text-[#FFD700] text-sm font-medium hover:text-[#FFE55C] transition-colors">
+                <a href="{% url 'single-category' category.id %}" class="mt-4 inline-flex items-center text-[var(--accent-blue)] text-sm font-medium hover:text-[#3a97c7] transition-colors">
                     View all providers
                     <i class="fas fa-chevron-right ml-1 text-xs"></i>
                 </a>

@@ -25,14 +25,9 @@ SECRET_KEY = 'django-insecure-n4avwofbs=^1x_)1(7jfd=$94my-f%wc88drrwykul%2&!k*pd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1","localhost","a204-102-0-16-152.ngrok-free.app"]
+ALLOWED_HOSTS = ["127.0.0.1","localhost"]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://a204-102-0-16-152.ngrok-free.app",
-    "https://sandbox.safaricom.co.ke",  # Allow MPesa sandbox requests
-    "https://api.safaricom.co.ke",
-    "http://localhost:8000",
-]
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -129,7 +124,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-CSRF_COOKIE_NAME= "csrftoken"
-CSRF_HEADER_NAME= "HTTP_X_CSRFTOKEN"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

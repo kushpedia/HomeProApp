@@ -2,179 +2,131 @@
 {% load static %}
 
 {% block content%}
-<head>
-    <style>
-        :root {
-            --midnight-blue: #0A192F;
-            --rich-gold: #FFD700;
-            --light-gold: #FFE55C;
-            --off-white: #F8F9FA;
-            --dark-blue: #0F1C3F;
-        }
-        
-        .gold-text {
-            color: var(--rich-gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .gold-button {
-            background-color: var(--rich-gold);
-            color: #000;
-            font-weight: 600;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-        
-        .gold-button:hover {
-            background-color: var(--light-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s ease-in-out forwards;
-        }
-        
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .border-gold {
-            border: 1px solid var(--rich-gold);
-        }
-        
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-    </style>
-</head>
 
-<div class="bg-[#0A192F] text-[#F8F9FA] min-h-screen">
+
+<div class="bg-[var(--light-gray)] text-[var(--dark-gray)] min-h-screen">
     <!-- Hero Section -->
-    <section class="relative py-32 px-6 text-center bg-gradient-to-b from-[#0A192F] to-[#0F1C3F] overflow-hidden">
+    <section class="relative py-32 px-6 text-center bg-gradient-to-b from-[var(--navy-blue)] to-[#0F2C6F] overflow-hidden">
         <div class="absolute inset-0 opacity-20">
-            <div class="absolute top-0 left-0 w-full h-full bg-[url('https://plus.unsplash.com/premium_photo-1667520405114-47d3677f966e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-[url({% static '/images/pages/landingpage1.png' %})] bg-cover bg-center"></div>
         </div>
         
         <div class="relative max-w-4xl mx-auto fade-in">
             <h1 class="text-5xl md:text-6xl font-bold mb-6 gold-text">HomePro Home Services</h1>
-            <p class="text-xl md:text-2xl mb-8">Your Home, Our Expertise</p>
+            <p class="text-xl md:text-2xl mb-8 gold-text">Your Home, Our Expertise</p>
             
-            <a href="#download" class="gold-button px-8 py-4 rounded-lg inline-flex items-center justify-center gap-2 text-lg hover:bg-[#FFE55C] transition-colors">
+            {% if request.user.is_authenticated %}
+            <a href="{%url 'register-service' %}" class="gold-button px-8 py-4 rounded-lg inline-flex items-center justify-center gap-2 text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Provide Services</span>
+            </a>
+            {% else %}
+            <a href="{% url 'register' %}" class="gold-button px-8 py-4 rounded-lg inline-flex items-center justify-center gap-2 text-lg">
+                <span>Get Started</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </a>
+
+            <a href="#download" class="gold-button px-8 py-4 rounded-lg inline-flex items-center justify-center gap-2 text-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
                 <span>Get the App</span>
             </a>
+            {% endif %}
         </div>
         
-        <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0A192F] to-transparent"></div>
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[var(--navy-blue)] to-transparent"></div>
     </section>
 
     <!-- Features Section -->
 <section id="features" class="container mx-auto py-20 px-6">
     <div class="text-center max-w-3xl mx-auto fade-in">
-        <h2 class="text-4xl font-bold gold-text mb-4">Premium Home Services</h2>
-        <p class="text-xl text-[#F8F9FA] mb-16">Trusted professionals for every corner of your home</p>
+        <h2 class="text-4xl font-bold gold-text mb-4">HomePro Home Services</h2>
+        <p class="text-xl text-[var(--dark-gray)] mb-16">Trusted professionals for every corner of your home</p>
     </div>
     
     <div class="grid md:grid-cols-3 gap-8 fade-in" style="animation-delay: 0.3s;">
         <!-- Cleaning Service Card -->
-        <div class="group bg-[#0F1C3F] rounded-xl border-gold hover-scale transition-all overflow-hidden">
+        <div class="group bg-[var(--white)] rounded-xl border-gold hover-scale transition-all overflow-hidden">
             <div class="relative h-48 overflow-hidden">
-                <img src="https://plus.unsplash.com/premium_photo-1661662912652-6b4ef35bddad?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mzd8fGNsZWFuaW5nJTIwdGVhbXxlbnwwfHwwfHx8MA%3D%3D" 
+                <img src="{% static '/images/pages/cleaning.png' %}" 
                     alt="Professional cleaning service" 
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0F1C3F] to-transparent"></div>
-                <div class="absolute top-4 right-4 w-14 h-14 bg-[#0A192F] rounded-full flex items-center justify-center border-gold">
+                <div class="absolute inset-0 bg-gradient-to-t from-[var(--navy-blue)] to-transparent opacity-30"></div>
+                <div class="absolute top-4 right-4 w-10 h-10 bg-[var(--navy-blue)] rounded-full flex items-center justify-center border-gold">
                     <i class="fas fa-broom text-xl gold-text"></i>
                 </div>
             </div>
             <div class="p-8">
                 <h3 class="text-2xl font-bold mb-3 gold-text">Premium Cleaning</h3>
-                <p class="text-[#F8F9FA]">Spotless results with eco-friendly products and vetted professionals.</p>
+                <p class="text-[var(--dark-gray)]">Spotless results with eco-friendly products and vetted professionals.</p>
                 <div class="mt-4 flex items-center">
                     <div class="flex mr-2">
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
                     </div>
-                    <span class="text-sm text-[#F8F9FA]">4.9 (2,340+)</span>
+                    <span class="text-sm text-[var(--dark-gray)]">4.9 (2,340+)</span>
                 </div>
             </div>
         </div>
         
         <!-- Plumbing Service Card -->
-        <div class="group bg-[#0F1C3F] rounded-xl border-gold hover-scale transition-all overflow-hidden">
+        <div class="group bg-[var(--white)] rounded-xl border-gold hover-scale transition-all overflow-hidden">
             <div class="relative h-48 overflow-hidden">
-                <img src="https://plus.unsplash.com/premium_photo-1663013675008-bd5a7898ac4f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+                <img src="{% static '/images/pages/plumbers.png' %}" 
                         alt="Plumber at work" 
                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0F1C3F] to-transparent"></div>
-                <div class="absolute top-4 right-4 w-14 h-14 bg-[#0A192F] rounded-full flex items-center justify-center border-gold">
-                    <i class="fas fa-faucet text-xl gold-text"></i>
+                <div class="absolute inset-0 bg-gradient-to-t from-[var(--navy-blue)] to-transparent opacity-30"></div>
+                <div class="absolute top-4 right-4 w-10 h-10 bg-[var(--navy-blue)] rounded-full flex items-center justify-center border-gold">
+                    <i class="fas fa-broom text-xl gold-text"></i>
                 </div>
             </div>
             <div class="p-8">
                 <h3 class="text-2xl font-bold mb-3 gold-text">Expert Plumbing</h3>
-                <p class="text-[#F8F9FA]">24/7 emergency services with upfront pricing and guaranteed work.</p>
+                <p class="text-[var(--dark-gray)]">24/7 emergency services with upfront pricing and guaranteed work.</p>
                 <div class="mt-4 flex items-center">
                     <div class="flex mr-2">
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star-half-alt text-[#FFD700]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star-half-alt text-[var(--accent-blue)]"></i>
                     </div>
-                    <span class="text-sm text-[#F8F9FA]">4.8 (1,750+)</span>
+                    <span class="text-sm text-[var(--dark-gray)]">4.8 (1,750+)</span>
                 </div>
             </div>
         </div>
         
         <!-- Electrical Service Card -->
-        <div class="group bg-[#0F1C3F] rounded-xl border-gold hover-scale transition-all overflow-hidden">
+        <div class="group bg-[var(--white)] rounded-xl border-gold hover-scale transition-all overflow-hidden">
             <div class="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1555963966-b7ae5404b6ed?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZWxlY3RyaWNpYW58ZW58MHx8MHx8fDA%3D" 
+                <img src="{% static '/images/pages/electricians.png' %}" 
                         alt="Electrician working" 
                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0F1C3F] to-transparent"></div>
-                <div class="absolute top-4 right-4 w-14 h-14 bg-[#0A192F] rounded-full flex items-center justify-center border-gold">
-                    <i class="fas fa-bolt text-xl gold-text"></i>
+                <div class="absolute inset-0 bg-gradient-to-t from-[var(--navy-blue)] to-transparent opacity-30"></div>
+                <div class="absolute top-4 right-4 w-10 h-10 bg-[var(--navy-blue)] rounded-full flex items-center justify-center border-gold">
+                    <i class="fas fa-broom text-xl gold-text"></i>
                 </div>
             </div>
             <div class="p-8">
                 <h3 class="text-2xl font-bold mb-3 gold-text">Electrical Services</h3>
-                <p class="text-[#F8F9FA]">Licensed electricians for installations, repairs, and safety inspections.</p>
+                <p class="text-[var(--dark-gray)]">Licensed electricians for installations, repairs, and safety inspections.</p>
                 <div class="mt-4 flex items-center">
                     <div class="flex mr-2">
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
-                        <i class="fas fa-star text-[#FFD700]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
+                        <i class="fas fa-star text-[var(--accent-blue)]"></i>
                     </div>
-                    <span class="text-sm text-[#F8F9FA]">5.0 (980+)</span>
+                    <span class="text-sm text-[var(--dark-gray)]">5.0 (980+)</span>
                 </div>
             </div>
         </div>
@@ -190,27 +142,27 @@
 </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 bg-[#0F1C3F]">
+    <section id="how-it-works" class="py-20 bg-[var(--navy-blue)]">
         <div class="container mx-auto px-6">
             <h2 class="text-4xl font-bold text-center gold-text mb-16 fade-in">How It Works</h2>
             
             <div class="flex flex-col md:flex-row justify-center items-center gap-12 fade-in" style="animation-delay: 0.5s;">
                 <div class="text-center max-w-xs">
-                    <div class="w-24 h-24 bg-[#0A192F] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl gold-text">1</div>
+                    <div class="w-24 h-24 bg-[var(--sky-blue)] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl text-white">1</div>
                     <h3 class="text-2xl font-bold mb-3 gold-text">Select Service</h3>
-                    <p>Browse our premium services and select what you need</p>
+                    <p class="text-[var(--light-gray)]">Browse our premium services and select what you need</p>
                 </div>
                 
                 <div class="text-center max-w-xs">
-                    <div class="w-24 h-24 bg-[#0A192F] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl gold-text">2</div>
+                    <div class="w-24 h-24 bg-[var(--sky-blue)] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl text-white">2</div>
                     <h3 class="text-2xl font-bold mb-3 gold-text">Schedule Appointment</h3>
-                    <p>Choose your preferred date and time</p>
+                    <p class="text-[var(--light-gray)]">Choose your preferred date and time</p>
                 </div>
                 
                 <div class="text-center max-w-xs">
-                    <div class="w-24 h-24 bg-[#0A192F] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl gold-text">3</div>
+                    <div class="w-24 h-24 bg-[var(--sky-blue)] rounded-full border-gold flex items-center justify-center mx-auto mb-6 text-3xl text-white">3</div>
                     <h3 class="text-2xl font-bold mb-3 gold-text">Enjoy Service</h3>
-                    <p>Relax while our professionals handle everything</p>
+                    <p class="text-[var(--light-gray)]">Relax while our professionals handle everything</p>
                 </div>
             </div>
         </div>
@@ -224,50 +176,48 @@
                 <p class="text-xl mb-10">Available on both iOS and Android platforms for your convenience</p>
                 
                 <div class="flex flex-col sm:flex-row justify-center gap-6">
-    <a href="#" class="gold-button px-8 py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-[#FFE55C] transition-colors">
+    <a href="#" class="gold-button px-8 py-4 rounded-lg flex items-center justify-center gap-3">
         <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="w-5 h-5 fill-white">
                 <path d="M318.7 268.7c-.2-36.7 16.4-64.4 54-84.1-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
             </svg>
         </div>
         <div class="text-left">
-            <div class="text-xs text-[#0B3D02]">Download on the</div>
-            <div class="text-lg font-semibold text-[#0B3D02]">App Store</div>
+            <div class="text-xs text-white">Download on the</div>
+            <div class="text-lg font-semibold text-white">App Store</div>
         </div>
     </a>
     
-    <a href="#" class="gold-button px-8 py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-[#FFE55C] transition-colors">
+    <a href="#" class="gold-button px-8 py-4 rounded-lg flex items-center justify-center gap-3">
         <div class="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-5 h-5 fill-white">
                 <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
             </svg>
         </div>
         <div class="text-left">
-            <div class="text-xs text-[#0B3D02]">Get it on</div>
-            <div class="text-lg font-semibold text-[#0B3D02]">Google Play</div>
+            <div class="text-xs text-white">Get it on</div>
+            <div class="text-lg font-semibold text-white">Google Play</div>
         </div>
     </a>
 </div>
             </div>
-            
-            
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 bg-[#0F1C3F] border-t border-[#FFD700]">
+    <footer class="py-12 bg-[var(--navy-blue)] border-t border-[var(--accent-blue)]">
         <div class="container mx-auto px-6 text-center fade-in" style="animation-delay: 1.2s;">
             <div class="flex justify-center gap-6 mb-8">
-                <a href="#" class="text-2xl gold-text hover:text-[#FFE55C]"><i class="fab fa-facebook"></i></a>
-                <a href="#" class="text-2xl gold-text hover:text-[#FFE55C]"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="text-2xl gold-text hover:text-[#FFE55C]"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="text-2xl gold-text hover:text-[#FFE55C]"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="text-2xl text-[var(--accent-blue)] hover:text-[#3a97c7]"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-2xl text-[var(--accent-blue)] hover:text-[#3a97c7]"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-2xl text-[var(--accent-blue)] hover:text-[#3a97c7]"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-2xl text-[var(--accent-blue)] hover:text-[#3a97c7]"><i class="fab fa-linkedin"></i></a>
             </div>
             
-            <p class="mb-4">HomePro Home Services</p>
-            <p class="mb-4">123 Luxury Avenue, Suite 100</p>
-            <p class="mb-4">contact@homepro.com | (254) 703-4567</p>
-            <p class="text-sm text-gray-400">© 2025 HomePro Home Services. All rights reserved.</p>
+            <p class="mb-4 text-[var(--light-gray)]">HomePro Home Services</p>
+            <p class="mb-4 text-[var(--light-gray)]">123 Professional Avenue, Suite 100</p>
+            <p class="mb-4 text-[var(--light-gray)]">contact@homepro.com | (254) 703-4567</p>
+            <p class="text-sm text-[var(--sky-blue)]">© 2025 HomePro Home Services. All rights reserved.</p>
         </div>
     </footer>
 </div>

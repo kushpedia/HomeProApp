@@ -15,18 +15,11 @@
     <!-- Dev Search UI -->
     <link rel="stylesheet" href="{% static 'styles/app.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/homestyles.css' %}" />
-    <title>HomePro</title>
-    <style>
-        .neon-text { text-shadow: 0 0 10px #FF007F, 0 0 20px #FF007F, 0 0 40px #9400D3; }
-        .neon-button { box-shadow: 0 0 10px #FF007F, 0 0 20px #00FFFF; }
-    </style>
+    <title>HomePro</title>    
 </head>
 <body>
-
-    {% comment %} {% include 'navbar.html'%} {% endcomment %}
-    
         
-                {% include 'navs.html' %}
+                {% include 'navbar.html' %}
     
                 {% if messages %}
                 {% for message in messages %}
@@ -44,12 +37,6 @@
 
     {% endblock content%}
     
-    {% comment %} {% include 'footer.html' %} {% endcomment %}
-    
-
-
-
-
     <script>
         // Wait until the page loads
         document.addEventListener("DOMContentLoaded", function() {

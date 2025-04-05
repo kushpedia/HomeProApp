@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import Profile
+from .models import Profile,LoginAttempt
 from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -16,6 +16,8 @@ from homepro import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+from datetime import timedelta
 User = get_user_model()
 # Create your views here.
 def homepage(request):
@@ -135,17 +137,46 @@ def loginUser(request):
         if not user.is_active:
             messages.warning(request, "Kindly check your email for activation, or request a new activation link.")
             return redirect('login')
+        # Check if account is locked
+        if hasattr(user, 'loginattempt') and user.loginattempt.attempts >= 3:
+            if user.loginattempt.lockout_until and timezone.now() < user.loginattempt.lockout_until:
+                remaining_time = user.loginattempt.lockout_until - timezone.now()
+                messages.error(request, f"Account locked. Try again in {remaining_time.seconds//60} minutes or contact System Admin..")
+                return redirect('login')
+            else:
+                # Reset attempts if lockout period has passed
+                user.loginattempt.attempts = 0
+                user.loginattempt.lockout_until = None
+                user.loginattempt.save()
 
-        user = authenticate(request, username=username, password=password)
+        user_auth = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            login(request, user)
-            messages.error(request, "logged In Successfully.")
+        if user_auth is not None:
+            # Reset login attempts on successful login
+            if hasattr(user, 'loginattempt'):
+                user.loginattempt.attempts = 0
+                user.loginattempt.lockout_until = None
+                user.loginattempt.save()
+                
+            login(request, user_auth)
+            messages.success(request, "Logged In Successfully.")  # Changed from error to success
             return redirect(request.GET.get('next', 'profile'))
         else:
-            messages.error(request, "Wrong Username OR Password!")
+            # Increment failed login attempts
+            if not hasattr(user, 'loginattempt'):
+                LoginAttempt.objects.create(user=user, attempts=1)
+            else:
+                user.loginattempt.attempts += 1
+                if user.loginattempt.attempts >= 3:
+                    # Lock account for 30 minutes
+                    user.loginattempt.lockout_until = timezone.now() + timedelta(minutes=30)
+                    messages.error(request, "Account locked due to too many failed attempts. Try again after 30 minutes or contact System Admin.")
+                else:
+                    messages.error(request, f"Wrong Username OR Password! {3 - user.loginattempt.attempts} attempts remaining.")
+                user.loginattempt.save()
 
     return render(request, 'users/login.html')
+    
 
 #forgotten password
 def forgot_password(request):
@@ -207,11 +238,11 @@ def reset_password(request, uidb64, token):
 
     return render(request, 'users/reset_password.html', {'uidb64': uidb64, 'token': token})
 
-
+@login_required(login_url='login')
 def logoutUser(request):
     logout(request)
     messages.info(request, "User Logged Out Succesfully")
-    return redirect('login')
+    return redirect('homepage')
 # get user profile page
 @login_required(login_url='login')
 def profile(request):

@@ -65,4 +65,13 @@ class Profile(models.Model):
     
     def __str__(self):
         return f"{self.full_name} Role: {self.role}"
-    
+# login attempts
+
+class LoginAttempt(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='loginattempt')
+    attempts = models.IntegerField(default=0)
+    lockout_until = models.DateTimeField(null=True, blank=True)
+    last_attempt = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.attempts} attempts"
