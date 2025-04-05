@@ -2,8 +2,8 @@ from django.db import models
 import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
-from django.contrib.auth.models import User
 from services.models import Service
+from django.db.models import Avg
 # Create your models here.
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -15,7 +15,6 @@ class Profile(models.Model):
     ('mpesa', 'Mpesa'),
     ('Paypal', 'Paypal'),
     ]
-
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
@@ -63,6 +62,12 @@ class Profile(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
     
+    @property
+    def average_rating(self):
+        return self.ratings_received.aggregate(
+            avg_rating=Avg('score')
+        )['avg_rating'] or 0
+        
     def __str__(self):
         return f"{self.full_name} Role: {self.role}"
 # login attempts

@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+
 # Create your views here.
 
 def services(request):
@@ -79,3 +80,19 @@ def load_services(request):
     }
     
     return render(request, 'services/services_partial.html', context)
+
+def category(request, pk):
+    category = get_object_or_404(ServiceCategory, id=pk)
+    users = Profile.objects.filter(services__category=category).distinct().prefetch_related('services')
+    services = Service.objects.filter(category=category).distinct()
+    
+    context = {
+        "category": category,
+        "users": users,
+        "services": services,
+    }
+    return render(request, 'services/single-category.html', context)
+
+
+# Get all users who offer services under this category
+    
