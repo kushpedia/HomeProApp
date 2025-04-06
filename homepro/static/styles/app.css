@@ -62,3 +62,19 @@
     transform: scale(1.05);
 }
     
+.file-upload-label.drag-over {
+    border-color: var(--accent-blue);
+    background-color: rgba(77, 168, 218, 0.1);
+}
+
+.file-preview-item {
+    transition: all 0.2s ease;
+}
+
+.file-preview-item:hover {
+    background-color: rgba(242, 244, 247, 0.8);
+}
+
+.remove-file-btn:hover {
+    transform: scale(1.1);
+}

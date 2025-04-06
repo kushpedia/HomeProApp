@@ -109,33 +109,24 @@ def category(request, pk):
 
 # Bookings
 # @ratelimit(key='user', rate='2/day', method='POST', block=True)
-@login_required
+@login_required(login_url='login')
 def book_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     available_providers = Profile.objects.filter(
         services=service,
-        is_available=True  # Add this field to Profile model
+        is_available=True
     ).annotate(
         avg_rating=Avg('reviews__rating'),
-        
     ).order_by('-avg_rating')
-        
     
     if request.method == 'POST':
-        form = BookingForm(request.POST, request.FILES)
+        form = BookingForm(request.POST)
+        # print("request.FILES:", request.FILES)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user.profile
             booking.service = service
             booking.date = form.cleaned_data['date']
-            files = request.POST['attachments'] 
-            print(files)
-            # Get all files
-            for f in files:
-                BookingAttachment.objects.create(
-                    booking=booking,
-                    file=f
-                )
             
             # Handle provider assignment
             preferred_provider_id = request.POST.get('provider')
@@ -148,25 +139,30 @@ def book_service(request, service_id):
                 except Profile.DoesNotExist:
                     messages.warning(request, 'Selected provider not available')
             
-            # Auto-assign if no provider chosen
-            if not booking.provider and available_providers.exists():
-                booking.provider = available_providers.first()
-            
-            # Validate date/time
-            # if booking.date <= timezone.now() + timedelta(hours=2):
-            #     form.add_error('date', 'Bookings require 2-hour advance notice')
-            # else:
+            # Save the booking first
             booking.save()
+            
+            # Handle file uploads
+
+            if 'attachments' in request.FILES:
+                print("Attachments found")
+                for file in request.FILES.getlist('attachments'):
+                    BookingAttachment.objects.create(
+                        booking=booking,
+                        file=file
+                    )
+            
             messages.success(request, 'Booking confirmed!')
-            # send_confirmation_email(booking)  # Implement this
             return redirect('homepage')
-            # return redirect('booking_detail', booking.id)
+        
+        else:
+            messages.error(request, 'Error in booking form. Please check your inputs.')
+            print("Form errors:", form.errors)
     else:
         form = BookingForm(initial={
             'date': timezone.now() + timedelta(days=1)
         })
     
-
     context = {
         'service': service,
         'form': form,
@@ -174,29 +170,3 @@ def book_service(request, service_id):
         'today': timezone.now().date()
     }
     return render(request, 'services/booking_form.html', context)
-    
-
-    
-
-# def send_booking_confirmation(booking):
-#     subject = f"Booking Confirmation for {booking.service.name}"
-#     message = f"""
-#     Hello {booking.user.first_name},
-    
-#     Your booking for {booking.service.name} has been confirmed.
-    
-#     Details:
-#     - Date: {booking.date.strftime("%A, %B %d %Y at %I:%M %p")}
-#     - Provider: {booking.provider.user.get_full_name() if booking.provider else 'To be assigned'}
-#     - Special Instructions: {booking.special_instructions or 'None'}
-    
-#     Thank you for choosing our services!
-#     """
-#     send_mail(
-#         subject,
-#         message,
-#         settings.DEFAULT_FROM_EMAIL,
-#         [booking.user.email],
-#         fail_silently=False,
-#     )
-    

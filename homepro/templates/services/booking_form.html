@@ -133,16 +133,7 @@
                     <button type="submit" class="w-full bg-[var(--accent-blue)] hover:bg-[#3a97c7] text-white font-medium rounded-lg px-6 py-3 transition-colors shadow-md hover:shadow-lg">
                         Confirm Booking
                     </button>
-                    {% if messages %}
-                        <div class="fixed top-4 right-4 z-50">
-                            {% for message in messages %}
-                            <div class="px-6 py-3 rounded-lg shadow-lg text-white 
-                                        {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
-                                {{ message }}
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    
                 </form>
 
             </div>
@@ -157,20 +148,47 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('booking_date').min = today;
         
-        // Preview uploaded files
+        // File upload handling
         const fileInput = document.getElementById('attachments');
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                const label = fileInput.parentElement;
-                label.innerHTML = `
-                    <div class="p-4 text-center">
-                        <p class="text-[var(--accent-blue)] font-medium">${e.target.files.length} file(s) selected</p>
-                        <p class="text-xs text-[var(--dark-gray)]">Click to change</p>
-                    </div>
-                    ${fileInput.outerHTML}
-                `;
-            }
+        const dropZone = fileInput.closest('label');
+        const previewContainer = document.createElement('div');
+        previewContainer.className = 'p-4 text-center hidden';
+        dropZone.appendChild(previewContainer);
+        
+        // Store original drop zone content
+        const originalContent = dropZone.querySelector('.flex-col').cloneNode(true);
+        
+        fileInput.addEventListener('change', function(e) {
+            updateFileDisplay();
         });
+        
+        function updateFileDisplay() {
+            if (fileInput.files && fileInput.files.length > 0) {
+                // Show preview
+                previewContainer.innerHTML = `
+                    <p class="text-[var(--accent-blue)] font-medium">${fileInput.files.length} file(s) selected</p>
+                    <p class="text-xs text-[var(--dark-gray)]">Click to change</p>
+                `;
+                previewContainer.classList.remove('hidden');
+                dropZone.querySelector('.flex-col').classList.add('hidden');
+                
+                // Add click handler to reset
+                previewContainer.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    resetFileDisplay();
+                });
+            }
+        }
+        
+        function resetFileDisplay() {
+            // Clear files
+            fileInput.value = '';
+            previewContainer.classList.add('hidden');
+            dropZone.querySelector('.flex-col').classList.remove('hidden');
+        }
     });
-</script>
+</script> 
+
+
+
 {% endblock %}
