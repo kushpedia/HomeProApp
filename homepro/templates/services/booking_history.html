@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bg-[var(--light-gray)] min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-3xl font-bold text-[var(--navy-blue)] mb-8">Your Booking History</h1>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                {% if bookings %}
+                <div class="divide-y divide-[var(--accent-blue)]/20">
+                    {% for booking in bookings %}
+                    <div class="p-6 hover:bg-[var(--light-gray)] transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div class="flex items-start gap-4">
+                                {% if booking.service.icon %}
+                                <img src="{{ booking.service.icon.url }}" alt="{{ booking.service.name }}" class="w-16 h-16 object-contain">
+                                {% else %}
+                                <img src="{% static '/images/services/services_default.png' %}" alt="{{ booking.service.name }}" class="w-16 h-16 object-contain">
+                                {% endif %}
+                                <div>
+                                    <h3 class="text-xl font-semibold text-[var(--navy-blue)]">{{ booking.service.name }}</h3>
+                                    <p class="text-[var(--dark-gray)]">
+                                        <span class="font-medium">Scheduled:</span> 
+                                        {{ booking.date|date:"F j, Y" }} at {{ booking.date|time:"g:i A" }}
+                                    </p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="px-3 py-1 rounded-full text-sm font-medium 
+                                            {% if booking.status == 'completed' %}bg-green-100 text-green-800
+                                            {% elif booking.status == 'cancelled' %}bg-red-100 text-red-800
+                                            {% else %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                        {% if booking.urgency_level == 'urgent' %}
+                                        <span class="ml-2 px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                                            Urgent
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <p class="text-lg font-bold text-[var(--navy-blue)]">
+                                    {% comment %} ${{ booking.get_total_price|floatformat:2 }} {% endcomment %}
+                                    3,000 Ksh/= 
+                                </p>
+                                <a href="{% url 'booking_detail' booking.id %}" class="mt-2 text-sm text-[var(--accent-blue)] hover:underline">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                        
+                        {% if booking.booking_files.exists %}
+                        <div class="mt-4 pt-4 border-t border-[var(--accent-blue)]/20">
+                            <h4 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Attachments:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                {% for file in booking.booking_files.all %}
+                                <a href="{{ file.file.url }}" target="_blank" class="flex items-center px-3 py-2 bg-[var(--light-gray)] rounded-lg hover:bg-[var(--accent-blue)]/10">
+                                    <svg class="w-4 h-4 mr-2 text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm text-[var(--dark-gray)]">Document {{ forloop.counter }}</span>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="px-6 py-4 border-t border-[var(--accent-blue)]/20">
+                    <div class="flex justify-between items-center">
+                        {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="px-4 py-2 bg-[var(--accent-blue)] text-white rounded-lg hover:bg-[#3a97c7]">
+                            Previous
+                        </a>
+                        {% endif %}
+                        
+                        <span class="text-sm text-[var(--dark-gray)]">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                        
+                        {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="px-4 py-2 bg-[var(--accent-blue)] text-white rounded-lg hover:bg-[#3a97c7]">
+                            Next
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% else %}
+                <div class="p-8 text-center">
+                    <svg class="w-16 h-16 mx-auto text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-[var(--navy-blue)]">No bookings found</h3>
+                    <p class="mt-2 text-[var(--dark-gray)]">You haven't made any bookings yet.</p>
+                    <a href="{% url 'services' %}" class="mt-4 inline-block px-6 py-2 bg-[var(--accent-blue)] text-white rounded-lg hover:bg-[#3a97c7]">
+                        Book a Service
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

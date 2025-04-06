@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bg-[var(--light-gray)] min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-[var(--navy-blue)]">Booking Details</h1>
+                <a href="{% url 'booking_history' %}" class="text-[var(--accent-blue)] hover:underline flex items-center">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to History
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <div class="flex flex-col md:flex-row gap-6 md:gap-8">
+                        <div class="flex-shrink-0">
+                            {% if booking.service.icon %}
+                            <img src="{{ booking.service.icon.url }}" alt="{{ booking.service.name }}" class="w-24 h-24 object-contain">
+                            {% else %}
+                            <img src="{% static '/images/services/services_default.png' %}" alt="{{ booking.service.name }}" class="w-24 h-24 object-contain">
+                            {% endif %}
+                        </div>
+                        
+                        <div class="flex-1">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-[var(--navy-blue)]">{{ booking.service.name }}</h2>
+                                    <p class="text-[var(--dark-gray)] mt-1">
+                                        Booked on {{ booking.created_at|date:"F j, Y" }}
+                                    </p>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium 
+                                        {% if booking.status == 'completed' %}bg-green-100 text-green-800
+                                        {% elif booking.status == 'cancelled' %}bg-red-100 text-red-800
+                                        {% else %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                    
+                                    {% if booking.urgency_level == 'urgent' %}
+                                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                                        Urgent
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-[var(--light-gray)] rounded-lg p-4">
+                                    <h3 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Scheduled Time</h3>
+                                    <p class="text-[var(--dark-gray)]">
+                                        {{ booking.date|date:"l, F j, Y" }}<br>
+                                        {{ booking.date|time:"g:i A" }}
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-[var(--light-gray)] rounded-lg p-4">
+                                    <h3 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Service Provider</h3>
+                                    <p class="text-[var(--dark-gray)]">
+                                        {% if booking.provider %}
+                                            {{ booking.provider.user.get_full_name }}
+                                        {% else %}
+                                            Not assigned yet
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-[var(--light-gray)] rounded-lg p-4">
+                                    <h3 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Special Instructions</h3>
+                                    <p class="text-[var(--dark-gray)]">
+                                        {% if booking.special_instructions %}
+                                            {{ booking.special_instructions }}
+                                        {% else %}
+                                            No special instructions
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-[var(--light-gray)] rounded-lg p-4">
+                                    <h3 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Total Price</h3>
+                                    <p class="text-xl font-bold text-[var(--navy-blue)]">
+                                        {% comment %} ${{ booking.get_total_price|floatformat:2 }} {% endcomment %}
+                                        
+                                        3,000 Ksh/=                                       
+                                        {% if booking.urgency_level == 'urgent' %}
+                                        <span class="text-sm font-normal text-[var(--dark-gray)]">(includes urgent fee)</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {% if booking.booking_files.exists %}
+                            <div class="mt-6">
+                                <h3 class="text-lg font-medium text-[var(--navy-blue)] mb-3">Attachments</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {% for file in booking.booking_files.all %}
+                                    <a href="{{ file.file.url }}" target="_blank" download class="flex items-center p-3 border border-[var(--accent-blue)]/20 rounded-lg hover:bg-[var(--accent-blue)]/5 transition-colors">
+                                        <svg class="w-6 h-6 mr-3 text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-[var(--navy-blue)] truncate">{{ file.file.name|cut:"services/booking_attachments/" }}</p>
+                                            <p class="text-xs text-[var(--dark-gray)]">{{ file.uploaded_at|date:"M j, Y" }} • {{ file.file.size|filesizeformat }}</p>
+                                        </div>
+                                        <svg class="w-5 h-5 ml-2 text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                        </svg>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if booking.status == 'pending' or booking.status == 'confirmed' %}
+                            <div class="mt-8 pt-6 border-t border-[var(--accent-blue)]/20">
+                                <button class="px-6 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                                    Cancel Booking
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

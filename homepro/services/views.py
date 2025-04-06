@@ -18,6 +18,8 @@ from users.models import Booking, BookingAttachment
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import pytz
+from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 timezone.activate(pytz.timezone('Africa/Nairobi')) 
 # from ratelimit.decorators import ratelimit
 
@@ -141,7 +143,8 @@ def book_service(request, service_id):
             
             # Save the booking first
             booking.save()
-            
+            # Send confirmation email
+            send_booking_confirmation(booking)
             # Handle file uploads
 
             if 'attachments' in request.FILES:
@@ -170,3 +173,43 @@ def book_service(request, service_id):
         'today': timezone.now().date()
     }
     return render(request, 'services/booking_form.html', context)
+def send_booking_confirmation(booking):
+    subject = f"Booking Confirmation for {booking.service.name}"
+    message = f"""
+    Hello {booking.user.first_name},
+    
+    Your booking for {booking.service.name} has been Received.
+    
+    Details:
+    - Date: {booking.date.strftime("%A, %B %d %Y at %I:%M %p")}
+    - Provider: 'To be assigned'
+    - Special Instructions: {booking.special_instructions or 'None'}
+    
+    Thank you for choosing our services!
+    """
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [booking.user.email],
+        fail_silently=False,
+    )
+    
+
+# booking history
+class BookingHistoryView(LoginRequiredMixin, ListView):
+    model = Booking
+    template_name = 'services/booking_history.html'
+    context_object_name = 'bookings'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user.profile).order_by('-date')
+    
+class BookingDetailView(LoginRequiredMixin, DetailView):
+    model = Booking
+    template_name = 'services/booking_detail.html'
+    context_object_name = 'booking'
+
+    def get_queryset(self):
+        return Booking.objects.filter(user=self.request.user.profile)
