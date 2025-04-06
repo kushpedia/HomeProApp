@@ -6,4 +6,6 @@ urlpatterns = [
     path("register-service/",views.register_service,name="register-service"),   
     path("load-services/",views.load_services,name="load_services"),
     
+    # bookings
+    path('book/<str:service_id>/', views.book_service, name='book_service'),
 ]

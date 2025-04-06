@@ -1,0 +1,165 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block content %}
+<section class=" bg-white min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <!-- Service Header -->
+            <div class="flex items-center gap-6 mb-8 ml-12">
+                {% if service.icon %}
+                <img src="{{ service.icon.url }}" alt="{{ service.name }}" class="w-20 h-20 object-contain">
+                {% else %}
+                <img src="{% static '/images/services/services_default.png' %}" alt="{{ service.name }}" class="w-20 h-20 object-contain">
+                {% endif %}
+                <div>
+                    <h1 class="text-2xl font-bold text-[var(--navy-blue)]">{{ service.name }}</h1>
+                    {% if service.price %}
+                    <p class="text-[var(--accent-blue)] font-medium">${{ service.price }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Booking Form -->
+            <div class=" bg-[var(--light-gray)] rounded-xl shadow-md border border-[var(--accent-blue)]/20 p-6 md:p-8">
+                <h2 class="text-xl font-bold text-[var(--navy-blue)] mb-6">Schedule Your Task</h2>
+                
+                <form method="POST" class="space-y-6" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Preferred Provider (Optional) -->
+                    <div class="mb-4">
+                        <label for="provider" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            Preferred Provider (Optional)
+                        </label>
+                        <select name="provider" id="provider" class="w-full p-3 border border-[var(--accent-blue)]/30 rounded-lg focus:border-[var(--accent-blue)] focus:ring-1 focus:ring-[var(--accent-blue)]/30">
+                            <option value="">-- No preference --</option>
+                            {% for provider in available_providers %}
+                            <option value="{{ provider.id }}">
+                                {{ provider.first_name }}
+                                
+                                {% if provider.average_rating %}
+                                    ⭐ {{ provider.average_rating|floatformat:1 }}
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Date Picker -->
+                    <div>
+                        <label for="booking_date" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            Booking Date *
+                        </label>
+                        <input type="date" name="booking_date" id="booking_date" 
+                                class="w-full p-3 border border-[var(--accent-blue)]/30 rounded-lg focus:border-[var(--accent-blue)] focus:ring-1 focus:ring-[var(--accent-blue)]/30"
+                                min="{{ today|date:'Y-m-d' }}" required>
+                    </div>
+                    
+                    <!-- Time Slot Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            Time Slot *
+                        </label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="flex items-center">
+                                <input type="radio" name="time_slot" value="morning" class="hidden peer" required>
+                                <div class="w-full p-3 border border-[var(--accent-blue)]/30 rounded-lg text-center cursor-pointer peer-checked:border-[var(--accent-blue)] peer-checked:bg-[var(--accent-blue)]/10 hover:border-[var(--accent-blue)]">
+                                    <span class="text-[var(--navy-blue)]">🌞 Morning</span>
+                                    <p class="text-xs text-[var(--dark-gray)]">8AM - 12PM</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="time_slot" value="afternoon" class="hidden peer" required>
+                                <div class="w-full p-3 border border-[var(--accent-blue)]/30 rounded-lg text-center cursor-pointer peer-checked:border-[var(--accent-blue)] peer-checked:bg-[var(--accent-blue)]/10 hover:border-[var(--accent-blue)]">
+                                    <span class="text-[var(--navy-blue)]">☀️ Afternoon</span>
+                                    <p class="text-xs text-[var(--dark-gray)]">12PM - 4PM</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="time_slot" value="evening" class="hidden peer" required>
+                                <div class="w-full p-3 border border-[var(--accent-blue)]/30 rounded-lg text-center cursor-pointer peer-checked:border-[var(--accent-blue)] peer-checked:bg-[var(--accent-blue)]/10 hover:border-[var(--accent-blue)]">
+                                    <span class="text-[var(--navy-blue)]">🌙 Evening</span>
+                                    <p class="text-xs text-[var(--dark-gray)]">4PM - 8PM</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Urgency Level -->
+                    <div>
+                        <label class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            Urgency Level (Optional)
+                        </label>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="urgency" value="normal" class="h-4 w-4 text-[var(--accent-blue)] focus:ring-[var(--accent-blue)]" checked>
+                                <span class="ml-2 text-[var(--navy-blue)]">Normal (Next Available)</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="urgency" value="urgent" class="h-4 w-4 text-[var(--accent-blue)] focus:ring-[var(--accent-blue)]">
+                                <span class="ml-2 text-[var(--navy-blue)]">Urgent (+20% fee)</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Attachments -->
+                    <div>
+                        <label for="attachments" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            Upload Photos (Optional)
+                        </label>
+                        <div class="flex items-center justify-center w-full">
+                            <label for="attachments" class="flex flex-col items-center justify-center w-full h-32 border-2 border-[var(--accent-blue)]/30 border-dashed rounded-lg cursor-pointer hover:bg-[var(--accent-blue)]/5">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg class="w-8 h-8 mb-2 text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    <p class="text-sm text-[var(--navy-blue)]"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                    <p class="text-xs text-[var(--dark-gray)]">PNG, JPG (MAX. 5MB each)</p>
+                                </div>
+                                <input id="attachments" name="attachments" type="file" class="hidden" multiple>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Instructions -->
+                    <div>
+                        <label for="{{ form.special_instructions.id_for_label }}" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
+                            {{ form.special_instructions.label }}
+                        </label>
+                        {{ form.special_instructions }}
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-[var(--accent-blue)] hover:bg-[#3a97c7] text-white font-medium rounded-lg px-6 py-3 transition-colors shadow-md hover:shadow-lg">
+                        Confirm Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Date Picker Enhancement -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('booking_date').min = today;
+        
+        // Preview uploaded files
+        const fileInput = document.getElementById('attachments');
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const label = fileInput.parentElement;
+                label.innerHTML = `
+                    <div class="p-4 text-center">
+                        <p class="text-[var(--accent-blue)] font-medium">${e.target.files.length} file(s) selected</p>
+                        <p class="text-xs text-[var(--dark-gray)]">Click to change</p>
+                    </div>
+                    ${fileInput.outerHTML}
+                `;
+            }
+        });
+    });
+</script>
+{% endblock %}

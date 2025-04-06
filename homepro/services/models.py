@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+
 import uuid
 
 
@@ -32,5 +32,5 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
-    
-#ratings
+    # Bookings
+

@@ -5,6 +5,8 @@ from django.db.models.signals import post_save, post_delete
 from services.models import Service
 from django.db.models import Avg
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import timedelta
+from django.utils import timezone
 # Create your models here.
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -124,3 +126,50 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.score} stars for {self.rated_user}"
+    
+    
+    #bookings
+    
+class Booking(models.Model):
+    STATUS_CHOICES = [  
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ]
+
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='bookings')
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    provider = models.ForeignKey(
+        Profile, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        # limit_choices_to={'role': 'service_provider'}
+    )
+    date = models.DateTimeField(validators=[MinValueValidator(timezone.now() + timedelta(hours=2))])
+    special_instructions = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-date']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['provider', 'date'],
+                name='unique_provider_booking_time',
+                condition=models.Q(status__in=['pending', 'confirmed'])
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'date'],
+                name='max_two_bookings_per_day',
+                condition=models.Q(
+                    date__gte=timezone.now() - timedelta(days=1),
+                    status__in=['pending', 'confirmed']
+                )
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user.email} - {self.service.name} on {self.date}"
