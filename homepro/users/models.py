@@ -7,6 +7,7 @@ from django.db.models import Avg
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import timedelta
 from django.utils import timezone
+from decimal import Decimal
 # Create your models here.
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -56,6 +57,7 @@ class Profile(models.Model):
 
         # Verification and timestamps
     is_verified = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=True)
     last_login = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,7 +139,11 @@ class Booking(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ]
-
+    URGENCY=[
+        ('normal', 'Normal'), 
+        ('urgent', 'Urgent')
+    ]
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='bookings')
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     provider = models.ForeignKey(
@@ -147,12 +153,23 @@ class Booking(models.Model):
         blank=True,
         # limit_choices_to={'role': 'service_provider'}
     )
-    date = models.DateTimeField(validators=[MinValueValidator(timezone.now() + timedelta(hours=2))])
+    date = models.DateTimeField()
     special_instructions = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    attachments = models.ManyToManyField(
+        'BookingAttachment',
+        blank=True,
+        related_name='related_bookings'
+    )
+    urgency_level = models.CharField(
+        max_length=10,
+        choices=URGENCY,
+        default='normal',
+        null=True,
+        blank=True
+    )
     class Meta:
         ordering = ['-date']
         constraints = [
@@ -170,6 +187,26 @@ class Booking(models.Model):
                 )
             )
         ]
-
+    def get_total_price(self):
+        base_price = self.service.price
+        if self.urgency_level == 'urgent':
+            return base_price * Decimal('1.2')
+        return base_price
+    
     def __str__(self):
         return f"{self.user.email} - {self.service.name} on {self.date}"
+
+
+
+class BookingAttachment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)    
+    booking = models.ForeignKey(
+        Booking, 
+        on_delete=models.CASCADE,
+        related_name='booking_files'
+    )
+    file = models.FileField(upload_to='services/booking_attachments/%Y/%m/%d/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment for {self.booking.id}"

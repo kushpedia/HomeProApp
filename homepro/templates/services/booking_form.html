@@ -116,7 +116,7 @@
                                     <p class="text-sm text-[var(--navy-blue)]"><span class="font-semibold">Click to upload</span> or drag and drop</p>
                                     <p class="text-xs text-[var(--dark-gray)]">PNG, JPG (MAX. 5MB each)</p>
                                 </div>
-                                <input id="attachments" name="attachments" type="file" class="hidden" multiple>
+                                <input id="attachments" name="attachments" type="file" class="hidden" multiple accept="image/*,.pdf,.doc,.docx">
                             </label>
                         </div>
                     </div>
@@ -133,7 +133,18 @@
                     <button type="submit" class="w-full bg-[var(--accent-blue)] hover:bg-[#3a97c7] text-white font-medium rounded-lg px-6 py-3 transition-colors shadow-md hover:shadow-lg">
                         Confirm Booking
                     </button>
+                    {% if messages %}
+                        <div class="fixed top-4 right-4 z-50">
+                            {% for message in messages %}
+                            <div class="px-6 py-3 rounded-lg shadow-lg text-white 
+                                        {% if message.tags == 'success' %}bg-green-500{% else %}bg-red-500{% endif %}">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </form>
+
             </div>
         </div>
     </div>

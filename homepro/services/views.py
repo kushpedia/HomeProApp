@@ -9,12 +9,12 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.conf import settings
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from .forms import BookingForm
-from users.models import Booking
+from users.models import Booking, BookingAttachment
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import pytz
@@ -113,53 +113,65 @@ def category(request, pk):
 def book_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     available_providers = Profile.objects.filter(
-        Q(services=service)     
-    ).distinct()
-    # debugging
-    # for provider in available_providers:
-    #     print(provider.first_name)
-    #     print(provider.id)
-    #     print(provider.average_rating)
+        services=service,
+        is_available=True  # Add this field to Profile model
+    ).annotate(
+        avg_rating=Avg('reviews__rating'),
+        
+    ).order_by('-avg_rating')
         
     
     if request.method == 'POST':
-        form = BookingForm(request.POST)
+        form = BookingForm(request.POST, request.FILES)
         if form.is_valid():
-            # Auto-assign least busy provider
             booking = form.save(commit=False)
             booking.user = request.user.profile
             booking.service = service
+            booking.date = form.cleaned_data['date']
+            files = request.POST['attachments'] 
+            print(files)
+            # Get all files
+            for f in files:
+                BookingAttachment.objects.create(
+                    booking=booking,
+                    file=f
+                )
             
-            # Provider assignment logic
-            if available_providers.exists():
-                # Get provider with fewest bookings at this time
-                from django.db.models import Count
-                provider = available_providers.annotate(
-                    booking_count=Count(
-                        'bookings_received',
-                        filter=models.Q(
-                            bookings_received__date=booking.date,
-                            bookings_received__status__in=['pending', 'confirmed']
-                        )
+            # Handle provider assignment
+            preferred_provider_id = request.POST.get('provider')
+            if preferred_provider_id:
+                try:
+                    booking.provider = Profile.objects.get(
+                        id=preferred_provider_id,
+                        services=service
                     )
-                ).order_by('booking_count').first()
-                booking.provider = provider
-
+                except Profile.DoesNotExist:
+                    messages.warning(request, 'Selected provider not available')
+            
+            # Auto-assign if no provider chosen
+            if not booking.provider and available_providers.exists():
+                booking.provider = available_providers.first()
+            
+            # Validate date/time
+            # if booking.date <= timezone.now() + timedelta(hours=2):
+            #     form.add_error('date', 'Bookings require 2-hour advance notice')
+            # else:
             booking.save()
-            
-            # Send confirmation email
-            # send_booking_confirmation(booking)
-            
-            messages.success(request, 'Your booking has been confirmed!')
+            messages.success(request, 'Booking confirmed!')
+            # send_confirmation_email(booking)  # Implement this
             return redirect('homepage')
+            # return redirect('booking_detail', booking.id)
     else:
-        form = BookingForm()
+        form = BookingForm(initial={
+            'date': timezone.now() + timedelta(days=1)
+        })
     
 
     context = {
         'service': service,
         'form': form,
-        'available_providers': available_providers
+        'available_providers': available_providers,
+        'today': timezone.now().date()
     }
     return render(request, 'services/booking_form.html', context)
     
