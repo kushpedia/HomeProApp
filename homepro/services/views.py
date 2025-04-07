@@ -175,28 +175,7 @@ def book_service(request, service_id):
         'today': timezone.now().date()
     }
     return render(request, 'services/booking_form.html', context)
-# def send_booking_confirmation(booking):
-#     subject = f"Booking Confirmation for {booking.service.name}"
-#     message = f"""
-    
-#     Hello {booking.user.first_name},
-    
-#     Your booking for {booking.service.name} has been Received.
-    
-#     Details:
-#     - Date: {booking.date.strftime("%A, %B %d %Y at %I:%M %p")}
-#     -provider : {booking.provider.first_name if booking.provider else 'To be assigned'}
-#     - Special Instructions: {booking.special_instructions or 'None'}
-    
-#     Thank you for choosing our services!
-#     """
-#     send_mail(
-#         subject,
-#         message,
-#         settings.EMAIL_HOST_USER,
-#         [booking.user.email],
-#         fail_silently=False,
-#     )
+
 
 def send_booking_confirmation(booking):
     subject = f"Booking Confirmation for {booking.service.name}"

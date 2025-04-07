@@ -32,9 +32,13 @@
                             
                             My Bookings
                         </a>
+                        <a href="{% url 'available_bids' %}" class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-[var(--sky-blue)]/10 hover:text-[var(--accent-blue)] transition-colors">
+                            
+                            Available Tasks
+                        </a>
                             <a href="{% url 'logout' %}" class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-[var(--sky-blue)]/10 hover:text-[var(--accent-blue)] transition-colors">Logout</a>
                             
-                        {% else %}
+                        {% else %}  
                             <a href="{% url 'login' %}" class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-[var(--sky-blue)]/10 hover:text-[var(--accent-blue)] transition-colors">Login</a>
                             <a href="{% url 'register' %}" class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-[var(--sky-blue)]/10 hover:text-[var(--accent-blue)] transition-colors">Register</a>
                             

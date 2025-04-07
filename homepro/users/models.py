@@ -19,6 +19,7 @@ class Profile(models.Model):
     ('mpesa', 'Mpesa'),
     ('Paypal', 'Paypal'),
     ]
+    
     id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255)
@@ -134,11 +135,12 @@ class Rating(models.Model):
     
 class Booking(models.Model):
     STATUS_CHOICES = [  
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled')
-    ]
+    ('pending', 'Pending'),  # Open for bidding
+    ('bidding', 'Open for Bidding'),  # New status
+    ('confirmed', 'Confirmed'),
+    ('completed', 'Completed'),
+    ('cancelled', 'Cancelled')
+]
     URGENCY=[
         ('normal', 'Normal'), 
         ('urgent', 'Urgent')
@@ -148,14 +150,14 @@ class Booking(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     provider = models.ForeignKey(
         Profile, 
-        on_delete=models.SET_NULL, 
+        on_delete=models.SET_NULL,
         null=True, 
         blank=True,
         # limit_choices_to={'role': 'service_provider'}
     )
     date = models.DateTimeField()
     special_instructions = models.TextField(blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='bidding')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     attachments = models.ManyToManyField(
@@ -192,6 +194,16 @@ class Booking(models.Model):
         if self.urgency_level == 'urgent':
             return base_price * Decimal('1.2')
         return base_price
+    def get_available_providers(self):
+        """Returns providers who can bid on this booking"""
+        return Profile.objects.filter(
+            services=self.service,
+            is_available=True
+        ).exclude(
+            user=self.user  # Exclude the customer who created the booking
+        ).annotate(
+            avg_rating=Avg('reviews__rating')
+        ).order_by('-avg_rating')
     
     def __str__(self):
         return f"{self.user.email} - {self.service.name} on {self.date}"
