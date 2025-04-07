@@ -50,22 +50,61 @@
                                 </a>
                             </div>
                         </div>
-                        
+                        {% comment %} Booking files {% endcomment %}
+
                         {% if booking.booking_files.exists %}
                         <div class="mt-4 pt-4 border-t border-[var(--accent-blue)]/20">
                             <h4 class="text-sm font-medium text-[var(--navy-blue)] mb-2">Attachments:</h4>
-                            <div class="flex flex-wrap gap-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 {% for file in booking.booking_files.all %}
-                                <a href="{{ file.file.url }}" target="_blank" class="flex items-center px-3 py-2 bg-[var(--light-gray)] rounded-lg hover:bg-[var(--accent-blue)]/10">
-                                    <svg class="w-4 h-4 mr-2 text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <span class="text-sm text-[var(--dark-gray)]">Document {{ forloop.counter }}</span>
-                                </a>
+                                <div class="group relative">
+                                    {% if file.file.url|lower|slice:'-4:' == '.jpg' or file.file.url|lower|slice:'-5:' == '.jpeg' or file.file.url|lower|slice:'-4:' == '.png' or file.file.url|lower|slice:'-4:' == '.gif' %}
+                                    <!-- Image Preview -->
+                                    <a href="{{ file.file.url }}" target="_blank" class="block overflow-hidden rounded-lg border border-[var(--accent-blue)]/20 hover:border-[var(--accent-blue)] transition-colors">
+                                        <img src="{{ file.file.url }}" alt="Attachment {{ forloop.counter }}" 
+                                            class="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-105">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                                            <span class="text-white text-xs truncate w-full">{{ file.file.name|cut:"services/booking_attachments/" }}</span>
+                                        </div>
+                                    </a>
+                                    {% elif file.file.url|lower|slice:'-4:' == '.pdf' %}
+                                    <!-- PDF Preview -->
+                                    <a href="{{ file.file.url }}" target="_blank" class="block h-32 bg-[var(--light-gray)] rounded-lg border border-[var(--accent-blue)]/20 hover:border-[var(--accent-blue)] transition-colors flex flex-col items-center justify-center p-3">
+                                        <svg class="w-10 h-10 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span class="text-xs text-[var(--dark-gray)] text-center truncate w-full">{{ file.file.name|cut:"services/booking_attachments/" }}</span>
+                                    </a>
+                                    {% else %}
+                                    <!-- Generic File Preview -->
+                                    <a href="{{ file.file.url }}" target="_blank" class="block h-32 bg-[var(--light-gray)] rounded-lg border border-[var(--accent-blue)]/20 hover:border-[var(--accent-blue)] transition-colors flex flex-col items-center justify-center p-3">
+                                        <svg class="w-10 h-10 text-[var(--accent-blue)] mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span class="text-xs text-[var(--dark-gray)] text-center truncate w-full">{{ file.file.name|cut:"services/booking_attachments/" }}</span>
+                                    </a>
+                                    {% endif %}
+                                    <div class="mt-1 flex justify-between items-center">
+                                        <span class="text-xs text-[var(--dark-gray)]">{{ file.file.size|filesizeformat }}</span>
+                                        <a href="{{ file.file.url }}" download class="text-[var(--accent-blue)] hover:text-[var(--navy-blue)]">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
                                 {% endfor %}
                             </div>
                         </div>
                         {% endif %}
+
+
+
+
+
+
+
+
                     </div>
                     {% endfor %}
                 </div>

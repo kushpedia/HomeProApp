@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.cache import cache
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.db import models
 from django.db.models import Q, Avg
 from django.conf import settings
@@ -115,8 +115,10 @@ def category(request, pk):
 def book_service(request, service_id):
     service = get_object_or_404(Service, id=service_id)
     available_providers = Profile.objects.filter(
-        services=service,
-        is_available=True
+    services=service,
+    is_available=True
+    ).exclude(
+        user=request.user  # Exclude the currently logged-in user
     ).annotate(
         avg_rating=Avg('reviews__rating'),
     ).order_by('-avg_rating')
@@ -155,8 +157,8 @@ def book_service(request, service_id):
                         file=file
                     )
             
-            messages.success(request, 'Booking confirmed!')
-            return redirect('homepage')
+            messages.success(request, 'Booking Received!')
+            return redirect('booking_history')
         
         else:
             messages.error(request, 'Error in booking form. Please check your inputs.')
@@ -173,29 +175,64 @@ def book_service(request, service_id):
         'today': timezone.now().date()
     }
     return render(request, 'services/booking_form.html', context)
+# def send_booking_confirmation(booking):
+#     subject = f"Booking Confirmation for {booking.service.name}"
+#     message = f"""
+    
+#     Hello {booking.user.first_name},
+    
+#     Your booking for {booking.service.name} has been Received.
+    
+#     Details:
+#     - Date: {booking.date.strftime("%A, %B %d %Y at %I:%M %p")}
+#     -provider : {booking.provider.first_name if booking.provider else 'To be assigned'}
+#     - Special Instructions: {booking.special_instructions or 'None'}
+    
+#     Thank you for choosing our services!
+#     """
+#     send_mail(
+#         subject,
+#         message,
+#         settings.EMAIL_HOST_USER,
+#         [booking.user.email],
+#         fail_silently=False,
+#     )
+
 def send_booking_confirmation(booking):
     subject = f"Booking Confirmation for {booking.service.name}"
     message = f"""
+    
     Hello {booking.user.first_name},
     
-    Your booking for {booking.service.name} has been Received.
+    Your booking for {booking.service.name} has been received.
     
     Details:
-    - Date: {booking.date.strftime("%A, %B %d %Y at %I:%M %p")}
-    - Provider: 'To be assigned'
+    - Booking Date: {booking.date.strftime("%A, %B %d, %Y at %I:%M %p")}
+    - Provider: {booking.provider.user.first_name if booking.provider else 'To be assigned'}
     - Special Instructions: {booking.special_instructions or 'None'}
     
     Thank you for choosing our services!
-    """
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_HOST_USER,
-        [booking.user.email],
-        fail_silently=False,
-    )
     
+    Note: This is an automated message. Please do not reply.
+    If you have any questions, please contact us through our support channels.
+    """
+    
+    email = EmailMessage(
+        subject=subject,
+        body=message.strip(),
+        from_email=settings.EMAIL_HOST_USER,
+        to=[booking.user.email],
+    )
 
+    if booking.provider and booking.provider.email:
+        email.cc = [booking.provider.email]
+
+    email.send(fail_silently=False)
+
+
+
+    
+# @login_required(login_url='login')
 # booking history
 class BookingHistoryView(LoginRequiredMixin, ListView):
     model = Booking
@@ -205,7 +242,8 @@ class BookingHistoryView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user.profile).order_by('-date')
-    
+
+
 class BookingDetailView(LoginRequiredMixin, DetailView):
     model = Booking
     template_name = 'services/booking_detail.html'

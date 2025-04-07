@@ -88,7 +88,7 @@
                     <!-- Urgency Level -->
                     <div>
                         <label class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
-                            Urgency Level (Optional)
+                            Urgency Level  
                         </label>
                         <div class="flex gap-4">
                             <label class="flex items-center">
@@ -105,7 +105,7 @@
                     <!-- Attachments -->
                     <div>
                         <label for="attachments" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
-                            Upload Photos (Optional)
+                            Upload Photos (Optional) <b class="text-red-500">Maximum of 4 Attachments</b>
                         </label>
                         <div class="flex items-center justify-center w-full">
                             <label for="attachments" class="flex flex-col items-center justify-center w-full h-32 border-2 border-[var(--accent-blue)]/30 border-dashed rounded-lg cursor-pointer hover:bg-[var(--accent-blue)]/5">
@@ -122,12 +122,12 @@
                     </div>
                     
                     <!-- Special Instructions -->
-                    <div>
+                    
                         <label for="{{ form.special_instructions.id_for_label }}" class="block text-sm font-medium text-[var(--navy-blue)] mb-2">
                             {{ form.special_instructions.label }}
                         </label>
                         {{ form.special_instructions }}
-                    </div>
+                    
                     
                     <!-- Submit Button -->
                     <button type="submit" class="w-full bg-[var(--accent-blue)] hover:bg-[#3a97c7] text-white font-medium rounded-lg px-6 py-3 transition-colors shadow-md hover:shadow-lg">

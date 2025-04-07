@@ -16,7 +16,8 @@ class BookingForm(forms.ModelForm):
         fields = ['special_instructions']
         widgets = {
             'special_instructions': forms.Textarea(attrs={
-                'class': 'your-css-classes',
+                'class': 'rounded-[20px] border border-gray-900/10 bg-white p-2',
+                'placeholder':'Describe your Task',
                 'rows': 3
             }),
         }
