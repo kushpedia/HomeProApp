@@ -217,7 +217,7 @@ class BookingHistoryView(LoginRequiredMixin, ListView):
     model = Booking
     template_name = 'services/booking_history.html'
     context_object_name = 'bookings'
-    paginate_by = 10
+    paginate_by = 1
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user.profile).order_by('-date')

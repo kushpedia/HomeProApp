@@ -40,15 +40,34 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+
                             <div class="flex flex-col items-end">
                                 <p class="text-lg font-bold text-[var(--navy-blue)]">
-                                    {% comment %} ${{ booking.get_total_price|floatformat:2 }} {% endcomment %}
                                     3,000 Ksh/= 
                                 </p>
-                                <a href="{% url 'booking_detail' booking.id %}" class="mt-2 text-sm text-[var(--accent-blue)] hover:underline">
-                                    View Details
-                                </a>
+                                <div class="flex gap-2 mt-2">
+                                    <a href="{% url 'booking_detail' booking.id %}" class="text-sm text-[var(--accent-blue)] hover:underline">
+                                        View Details
+                                    </a>
+                                    {% if booking.status == 'bidding' %}
+                                    <a href="{% url 'booking_bids' booking.id %}" class="text-sm text-[var(--accent-blue)] hover:underline">
+                                        View Bids ({{ booking.booking_bid_s.count }})
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </div>
+
+
+
+
+
+
+
+
+
                         </div>
                         {% comment %} Booking files {% endcomment %}
 

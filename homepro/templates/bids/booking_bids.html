@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="bg-[var(--light-gray)] min-h-screen py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold text-[var(--navy-blue)]">Bids for {{ booking.service.name }}</h1>
+                <a href="{% url 'booking_history' %}" class="text-[var(--accent-blue)] hover:underline flex items-center">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Bookings
+                </a>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                {% if bids %}
+                <div class="divide-y divide-[var(--accent-blue)]/20">
+                    {% for bid in bids %}
+                    <div class="p-6 hover:bg-[var(--light-gray)] transition-colors">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <h3 class="text-xl font-semibold text-[var(--navy-blue)]">{{ bid.provider.full_name }}</h3>
+                                <p class="text-[var(--dark-gray)] mt-1">
+                                    <span class="font-medium">Bid Amount:</span> 
+                                    {{ bid.price }} Ksh
+                                </p>
+                                {% if bid.comment %}
+                                <div class="mt-2 bg-[var(--light-gray)] rounded-lg p-3">
+                                    <p class="text-[var(--dark-gray)]">{{ bid.comment }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex flex-col items-end">
+                                <p class="text-sm text-[var(--dark-gray)]">
+                                    Submitted on {{ bid.created_at|date:"F j, Y" }}
+                                </p>
+                                <form method="post" action="{% url 'accept_bid' bid.id %}" class="mt-4">
+                                    {% csrf_token %}
+                                    <button type="submit" 
+                                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                        Accept Bid
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="p-8 text-center">
+                    <svg class="w-16 h-16 mx-auto text-[var(--accent-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <h3 class="mt-4 text-lg font-medium text-[var(--navy-blue)]">No bids yet</h3>
+                    <p class="mt-2 text-[var(--dark-gray)]">No providers have bid on this booking yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
