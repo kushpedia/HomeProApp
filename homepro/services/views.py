@@ -187,7 +187,7 @@ def send_booking_confirmation(booking):
     
     Details:
     - Booking Date: {booking.date.strftime("%A, %B %d, %Y at %I:%M %p")}
-    - Provider: {booking.provider.user.first_name if booking.provider else 'To be assigned'}
+    - Provider: {booking.provider.first_name if booking.provider else 'To be assigned'}
     - Special Instructions: {booking.special_instructions or 'None'}
     
     Thank you for choosing our services!

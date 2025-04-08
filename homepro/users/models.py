@@ -75,7 +75,7 @@ class Profile(models.Model):
         )['avg_rating'] or 0
         
     def __str__(self):
-        return f"{self.full_name} Role: {self.role}"
+        return self.full_name
 
 
 # login attempts
@@ -206,7 +206,7 @@ class Booking(models.Model):
         ).order_by('-avg_rating')
     
     def __str__(self):
-        return f"{self.user.email} - {self.service.name} on {self.date}"
+        return f"{self.service.name}-Requested By:{self.user.first_name}"
 
 
 
@@ -221,4 +221,4 @@ class BookingAttachment(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Attachment for {self.booking.id}"
+        return f"Attachment for {self.booking.service.name} Requested By {self.booking.user.first_name}"
