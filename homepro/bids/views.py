@@ -11,6 +11,7 @@ from .forms import BidForm
 from django.db import transaction
 from django.urls import reverse
 from .models import Bid
+from django.db import IntegrityError
 # Create your views here.
 @login_required(login_url='login')
 def bidding_opportunities(request):
@@ -40,15 +41,28 @@ def create_bid(request, booking_id):
                                 status='bidding',
         service__in=request.user.profile.services.all())
     
+    
+    # Check if user already bid on this booking
+    existing_bid = Bid.objects.filter(
+            booking=booking,
+            provider=request.user.profile
+        ).first()
+    bid_check = None
+    if existing_bid:
+        bid_check = f'You already submitted a bid of {existing_bid.price} Ksh for this booking'         
+    
 
     form = BidForm()
     
     context = {
         'booking': booking,
         'form': form,
-        'title': 'Submit Bid'
+        'title': 'Submit Bid',
+        'bid_check': bid_check,
     }
     return render(request, 'services/create_bid.html', context)
+
+
 def post_bid(request):
     if request.method == 'POST':
         
@@ -59,17 +73,33 @@ def post_bid(request):
         # status='pending',
         service__in=request.user.profile.services.all()
     ) 
-    
+    # Check if user already bid on this booking
+        existing_bid = Bid.objects.filter(
+            booking=booking,
+            provider=request.user.profile
+        ).first()
+        
+        if existing_bid:
+            messages.warning(
+                request, 
+                f'You already submitted a bid of {existing_bid.price} Ksh for this booking'
+            )
+            return redirect('available_bids')
+        
         form = BidForm(request.POST)        
         if form.is_valid():
             try:
                 with transaction.atomic():
+                    
+                    
                     # Validate form first
                     if not form.is_valid():
                         raise ValueError("Invalid form data")
                     bid = form.save(commit=False)
                     bid.booking = booking
                     bid.provider = request.user.profile
+                    
+                    
                     # Ensure required fields exist
                     if not all([bid.booking, bid.provider, form.cleaned_data.get('price')]):
                         raise ValueError("Missing required bid information")
@@ -78,6 +108,7 @@ def post_bid(request):
                     bid.price = form.cleaned_data['price']
                     bid.comment = form.cleaned_data['comment']
                     bid.save()
+                    
                     # Send notification
                     subject = f"New Bid for {booking.service.name}"
                     message = f"""
@@ -103,6 +134,8 @@ def post_bid(request):
                     
                 messages.success(request, 'Your bid has been submitted successfully!')
                 return redirect('available_bids')
+            except IntegrityError:
+                messages.warning(request, 'You have already submitted a bid for this booking')
             except Exception as e:
                 messages.error(request, f'Error submitting bid: {str(e)}')
         

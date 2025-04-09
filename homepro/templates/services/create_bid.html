@@ -124,10 +124,12 @@
                         </div>
                         
                         <div class="mt-8 flex items-center justify-end gap-4">
-                            
-                            <button type="submit" class="px-6 py-2 bg-[var(--accent-blue)] text-white rounded-lg hover:bg-[var(--navy-blue)] transition-colors">
-                                Submit Your Bid
+                            <button type="submit" 
+                                class="px-6 py-2 bg-[var(--accent-blue)] text-white rounded-lg hover:bg-[var(--navy-blue)] transition-colors {% if bid_check %}opacity-50 cursor-not-allowed{% endif %}"
+                                {% if bid_check %}disabled{% endif %}>
+                                {% if bid_check %}You Have Already Submitted a Bid For This Task{% else %}Submit Your Bid{% endif %}
                             </button>
+                            
                         </div>
                     </form>
                     
