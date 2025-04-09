@@ -53,11 +53,11 @@ def process_payment(request):
                 # Process payment (implement your payment gateway logic here)
                 if payment_method == 'mpesa':
                     headers = {
-                            'Authorization': 'Bearer 8KOtwAnWOYaQCfvOZGRT6Py3r8JS'
+                            'Authorization': 'Bearer key'
                             }
                     payload = {
                         "BusinessShortCode": 174379,
-                        "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDA5MjA1MTI2",
+                        "Password": "password",
                         "Timestamp": "20250409205126",
                         "TransactionType": "CustomerPayBillOnline",
                         "Amount": 10,
