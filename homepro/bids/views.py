@@ -163,46 +163,15 @@ def accept_bid(request, bid_id):
     bid = get_object_or_404(Bid, id=bid_id, booking__user=request.user.profile)
     
     with transaction.atomic():
-        # Update booking status and provider
+        # set booking 
         booking = bid.booking
-        booking.status = 'confirmed'
         booking.provider = bid.provider
         booking.save()
         
-        # Optionally: Reject all other bids for this booking
-        booking.booking_bid_s.exclude(id=bid_id).update(status='rejected')
         
-        # Send notifications
-        send_bid_accepted_notification(bid)
         
-    messages.success(request, f"You've accepted the bid from {bid.provider.full_name}")
-    return redirect('booking_history')
+    messages.success(request, f"You've accepted the bid from {bid.provider.full_name} Proceed to payment")
+    request.session['payment_booking_id'] = str(booking.id)
+    request.session['payment_bid_id'] = str(bid.id)
+    return redirect('payment_options')
 
-def send_bid_accepted_notification(bid):
-    subject = f"Your bid for {bid.booking.service.name} has been accepted!"
-    message = f"""
-    Congratulations {bid.provider.full_name},
-    
-    Your bid of {bid.price} Ksh for {bid.booking.service.name} has been accepted!
-    
-    Booking Details:
-    -Customer : {bid.booking.user.first_name}
-    -Phone : {bid.booking.user.phone}
-    - Booking Date: {bid.booking.date}
-    - Location: {bid.booking.user.location}
-    - Special Instructions: {bid.booking.special_instructions or 'None'}
-    
-    Please contact the client to confirm details.
-    """
-    
-    email = EmailMessage(
-        subject=subject,
-        body=message.strip(),
-        from_email=settings.EMAIL_HOST_USER,
-        to=[bid.provider.email],
-    )
-
-    
-    email.cc = [bid.booking.user.email]
-
-    email.send(fail_silently=False)

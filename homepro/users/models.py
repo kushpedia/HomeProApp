@@ -139,8 +139,9 @@ class Booking(models.Model):
     ('bidding', 'Open for Bidding'),  # New status
     ('confirmed', 'Confirmed'),
     ('completed', 'Completed'),
-    ('cancelled', 'Cancelled')
-]
+    ('cancelled', 'Cancelled'),
+    ('paid', 'Payment Received'),  # New status
+    ]
     URGENCY=[
         ('normal', 'Normal'), 
         ('urgent', 'Urgent')
