@@ -60,7 +60,7 @@ def process_payment(request):
                     payload = {
                         "BusinessShortCode": 174379,
                         "Password": "",
-                        "Timestamp": "20250410203745",
+                        "Timestamp": "20250410230620",
                         "TransactionType": "CustomerPayBillOnline",
                         "Amount": bid_amount,
                         "PartyA": 254707485760,

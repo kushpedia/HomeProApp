@@ -9,7 +9,7 @@
             <!-- Confirmed Tasks -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
                 <div class="p-6">
-                    <h2 class="text-xl font-semibold text-[var(--navy-blue)] mb-4">Confirmed Tasks</h2>
+                    <h2 class="text-xl font-semibold text-[var(--navy-blue)] mb-4">Confirmed Tasks (Pending Your Action)</h2>
                     {% if confirmed_tasks %}
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {% for task in confirmed_tasks %}
@@ -67,7 +67,7 @@
             <!-- Completed Tasks -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden">
                 <div class="p-6">
-                    <h2 class="text-xl font-semibold text-[var(--navy-blue)] mb-4">Completed Tasks</h2>
+                    <h2 class="text-xl font-semibold text-[var(--navy-blue)] mb-4">Completed Tasks (History)</h2>
                     {% if completed_tasks %}
                         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {% for task in completed_tasks %}

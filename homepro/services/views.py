@@ -275,7 +275,7 @@ def provider_tasks(request):
 
 @login_required(login_url='login')
 def complete_task(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, provider=request.user)
+    booking = get_object_or_404(Booking, id=booking_id, provider=request.user.profile)
     
     if request.method == 'POST':
         form = CompleteTaskForm(request.POST, request.FILES)
@@ -286,17 +286,21 @@ def complete_task(request, booking_id):
                 completion.booking = booking
                 completion.save()
                 
+                
                 # Handle multiple image uploads
-                for image in request.FILES.getlist('images'):
-                    ProofImage.objects.create(
-                        image=image,
-                        task_completion=completion
-                    )
+                if 'attachments' in request.FILES:
+                    print("Attachments found")
+                    for file in request.FILES.getlist('attachments'):
+                        ProofImage.objects.create(
+                            task=completion,
+                            file=file
+                        )
                 
                 # Update booking status
-                booking.status = Booking.COMPLETED
+                booking.status = 'completed'
+                booking.completed_at= timezone.now()
                 booking.save()
-                
+                messages.success(request, 'Task marked as completed!')
             return redirect('provider_tasks')
     else:
         form = CompleteTaskForm()

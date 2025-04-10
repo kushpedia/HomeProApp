@@ -16,7 +16,7 @@ class BookingForm(forms.ModelForm):
         fields = ['special_instructions']
         widgets = {
             'special_instructions': forms.Textarea(attrs={
-                'class': 'rounded-[20px] border border-gray-900/10 bg-white p-2',
+                'class': 'rounded-[20px] border border-gray-900/10 bg-white p-2 w-full',
                 'placeholder':'Describe your Task',
                 'rows': 3
             }),
@@ -77,7 +77,8 @@ class CompleteTaskForm(forms.ModelForm):
         fields = ['provider_notes']
         widgets = {
             'provider_notes': forms.Textarea(attrs={
-                'rows': 4,
+                'class':'mb-4 p-3 border border-[var(--accent-blue)]/2 rounded-lg bg-white w-full',
+                'rows': 2,
                 'placeholder': 'Add any notes about the completed work...'
             }),
         }

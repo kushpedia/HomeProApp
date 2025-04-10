@@ -236,8 +236,12 @@ class TaskCompletion(models.Model):
     completed_at = models.DateTimeField(auto_now_add=True)
     proof_images = models.ManyToManyField('ProofImage')
     provider_notes = models.TextField(blank=True)
+    def __str__(self):
+        return self.booking.service.name
+
 
 class ProofImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     file = models.FileField(upload_to='services/booking_attachments/%Y/%m/%d/')  
     task = models.ForeignKey(
