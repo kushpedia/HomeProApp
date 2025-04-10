@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404,redirect
 from django.http.response import HttpResponse
 from.models import Service,ServiceCategory
-from users.models import Profile
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
@@ -14,12 +13,17 @@ from django.conf import settings
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods
 from .forms import BookingForm
-from users.models import Booking, BookingAttachment
+from users.models import Booking, BookingAttachment,Profile, TaskCompletion, ProofImage,Review
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 import pytz
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import CompleteTaskForm
+from django.db import transaction
+from django.db.models import Prefetch
+from bids.models import Bid
+from django.utils.timezone import now
 timezone.activate(pytz.timezone('Africa/Nairobi')) 
 # from ratelimit.decorators import ratelimit
 
@@ -230,3 +234,74 @@ class BookingDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Booking.objects.filter(user=self.request.user.profile)
+    
+@login_required(login_url='login')
+def provider_tasks(request):
+    # Show confirmed and completed tasks in separate lists
+    
+    bid_prefetch = Prefetch(
+        'booking_bid_s',
+        queryset=Bid.objects.filter(status='accepted'),
+        to_attr='prefetched_accepted_bid'
+    )
+    confirmed = Booking.objects.filter(
+        provider=request.user.profile,
+        status='confirmed'
+    ).prefetch_related(
+        bid_prefetch
+    ).select_related(
+        'service', 
+        'user'
+    )
+    
+    # print("Confirmed tasks:", confirmed)  #debugging
+    completed = Booking.objects.filter(
+        provider=request.user.profile,
+        status='completed'
+    ).prefetch_related(
+        bid_prefetch
+    ).select_related(
+        'service', 
+        'user'
+    )
+    context = {
+        'confirmed_tasks': confirmed,
+        'completed_tasks': completed
+    }
+    
+    
+    # print("Completed tasks:", completed) #debugging
+    return render(request, 'services/tasks.html', context)
+
+@login_required(login_url='login')
+def complete_task(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, provider=request.user)
+    
+    if request.method == 'POST':
+        form = CompleteTaskForm(request.POST, request.FILES)
+        if form.is_valid():
+            with transaction.atomic():
+                # Create task completion record
+                completion = form.save(commit=False)
+                completion.booking = booking
+                completion.save()
+                
+                # Handle multiple image uploads
+                for image in request.FILES.getlist('images'):
+                    ProofImage.objects.create(
+                        image=image,
+                        task_completion=completion
+                    )
+                
+                # Update booking status
+                booking.status = Booking.COMPLETED
+                booking.save()
+                
+            return redirect('provider_tasks')
+    else:
+        form = CompleteTaskForm()
+    
+    return render(request, 'services/complete_task.html', {
+        'booking': booking,
+        'form': form
+    })

@@ -161,6 +161,7 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='bidding')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)    
     attachments = models.ManyToManyField(
         'BookingAttachment',
         blank=True,
@@ -205,6 +206,10 @@ class Booking(models.Model):
         ).annotate(
             avg_rating=Avg('reviews__rating')
         ).order_by('-avg_rating')
+    @property
+    def accepted_bid(self):
+        """Returns the accepted bid for this booking if exists"""
+        return self.booking_bid_s.filter(status='accepted').first()
     
     def __str__(self):
         return f"{self.service.name}-Requested By:{self.user.first_name}"
@@ -223,3 +228,43 @@ class BookingAttachment(models.Model):
 
     def __str__(self):
         return f"Attachment for {self.booking.service.name} Requested By {self.booking.user.first_name}"
+
+
+class TaskCompletion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    completed_at = models.DateTimeField(auto_now_add=True)
+    proof_images = models.ManyToManyField('ProofImage')
+    provider_notes = models.TextField(blank=True)
+
+class ProofImage(models.Model):
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    file = models.FileField(upload_to='services/booking_attachments/%Y/%m/%d/')  
+    task = models.ForeignKey(
+        TaskCompletion, 
+        on_delete=models.CASCADE,
+        related_name='task_completion_files'
+    )
+    
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment for {self.booking.service.name} Requested By {self.booking.user.first_name}"
+
+
+
+
+class Review(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    feedback = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Suggested home service questions:
+    punctuality = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    quality = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    professionalism = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    
+    class Meta:
+        ordering = ['-created_at']

@@ -5,8 +5,8 @@ from django.utils import timezone
 from datetime import timedelta
 from django.utils.timezone import make_aware
 from users.models import Booking
-from django.forms.widgets import FileInput
 
+from users.models import TaskCompletion
 from django.utils.safestring import mark_safe
 
 
@@ -69,3 +69,17 @@ class BookingForm(forms.ModelForm):
             raise forms.ValidationError(f"Invalid date/time: {str(e)}")
 
         return cleaned_data
+
+
+class CompleteTaskForm(forms.ModelForm):
+    class Meta:
+        model = TaskCompletion
+        fields = ['provider_notes']
+        widgets = {
+            'provider_notes': forms.Textarea(attrs={
+                'rows': 4,
+                'placeholder': 'Add any notes about the completed work...'
+            }),
+        }
+    
+    

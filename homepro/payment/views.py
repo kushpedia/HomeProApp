@@ -55,12 +55,12 @@ def process_payment(request):
                 # Process payment (implement your payment gateway logic here)
                 if payment_method == 'mpesa':
                     headers = {
-                            'Authorization': 'Bearer Aa8uGULZJ7TYebhM6FAPADuotITg'
+                            'Authorization': 'Bearer '
                             }
                     payload = {
                         "BusinessShortCode": 174379,
-                        "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDEwMDcwNjU5",
-                        "Timestamp": "20250410070659",
+                        "Password": "",
+                        "Timestamp": "20250410203745",
                         "TransactionType": "CustomerPayBillOnline",
                         "Amount": bid_amount,
                         "PartyA": 254707485760,
@@ -77,7 +77,7 @@ def process_payment(request):
                     try:
                         response_data = response.json() # Mpesa Response
                         
-                        print("Response from M-Pesa:", response_data)  # Debugging
+                        # print("Response from M-Pesa:", response_data)  # Debugging
                         
                         mpesa_request_code = response_data['ResponseDescription']
                         if mpesa_request_code =='Success. Request accepted for processing':                            
@@ -89,6 +89,7 @@ def process_payment(request):
                             booking.booking_bid_s.exclude(id=bid_id).update(status='rejected')
                             
                             bid.status = 'accepted'
+                            bid.accepted_at= datetime.now()
                             bid.save()
                             booking.save()
                             # Send notifications

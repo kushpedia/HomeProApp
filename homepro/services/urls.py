@@ -10,4 +10,8 @@ urlpatterns = [
     path('book/<str:service_id>/', views.book_service, name='book_service'),
     path('history/', views.BookingHistoryView.as_view(), name='booking_history'),
     path('bookings/<uuid:pk>/', views.BookingDetailView.as_view(), name='booking_detail'),
+    
+    #tasks
+    path('tasks/', views.provider_tasks, name='provider_tasks'),
+    path('tasks/<uuid:booking_id>/complete/', views.complete_task, name='complete_task'),
 ]
