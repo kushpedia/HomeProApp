@@ -13,9 +13,10 @@ from django.contrib import messages
 from django.core.mail import send_mail, EmailMessage
 from django.db import transaction
 from bids.models import Bid
-
+import math
 def payment_options(request):
     booking_id_str = request.session.get('payment_booking_id')
+    bid_id_str = request.session.get('payment_bid_id')  
     if not booking_id_str:
         return redirect('booking_history')
         
@@ -23,7 +24,7 @@ def payment_options(request):
         booking_id = UUID(booking_id_str)
     except ValueError:
         return redirect('booking_history')
-    bid= None 
+    bid= get_object_or_404(Bid, id=bid_id_str)
     booking = get_object_or_404(Booking, id=booking_id, user=request.user.profile)
     return render(request, 'payments/payment_options.html', {
         'booking': booking,
@@ -47,20 +48,21 @@ def process_payment(request):
         # print(f"Payment method selected: {payment_method}") 
         # print(f"Booking ID: {booking_id}")
         user_phone = request.user.profile.phone
-        print(f"User phone number: {user_phone}")
+        bid_amount = math.ceil(bid.price)
+        # print(f"User phone number: {user_phone}")
         try:
             with transaction.atomic():
                 # Process payment (implement your payment gateway logic here)
                 if payment_method == 'mpesa':
                     headers = {
-                            'Authorization': 'Bearer key'
+                            'Authorization': 'Bearer Aa8uGULZJ7TYebhM6FAPADuotITg'
                             }
                     payload = {
                         "BusinessShortCode": 174379,
-                        "Password": "password",
-                        "Timestamp": "20250409205126",
+                        "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDEwMDcwNjU5",
+                        "Timestamp": "20250410070659",
                         "TransactionType": "CustomerPayBillOnline",
-                        "Amount": 10,
+                        "Amount": bid_amount,
                         "PartyA": 254707485760,
                         "PartyB": 174379,
                         "PhoneNumber": user_phone,
@@ -91,6 +93,7 @@ def process_payment(request):
                             booking.save()
                             # Send notifications
                             send_bid_accepted_notification(bid)
+                            messages.success(request,"Your Payment Was successful")
                             
                         else:
                             messages.error(request,"Your Payment failed try Again")
@@ -128,18 +131,20 @@ def process_payment(request):
 def send_bid_accepted_notification(bid):
     subject = f"Your bid for {bid.booking.service.name} has been accepted!"
     message = f"""
-    Congratulations {bid.provider.full_name},
+    🎉 Congratulations {bid.provider.first_name}!,
     
-    Your bid of {bid.price} Ksh for {bid.booking.service.name} has been accepted!
+    Your bid of Ksh {bid.price:,.2f} for {bid.booking.service.name} has been accepted!
     
-    Booking Details:
-    -Customer : {bid.booking.user.first_name}
-    -Phone : {bid.booking.user.phone}
-    - Booking Date: {bid.booking.date}
-    - Location: {bid.booking.user.location}
-    - Special Instructions: {bid.booking.special_instructions or 'None'}
+    📌 Service: {bid.booking.service.name}
+    👤 Client: {bid.booking.user.first_name}
+    📞 Contact: {bid.booking.user.phone}
+    📅 Date: {bid.booking.date.strftime('%A, %B %d, %Y at %I:%M %p')}
+    📍 Location: {bid.booking.user.location}
+    📝 Notes: {bid.booking.special_instructions or 'None'}
     
-    Please contact the client to confirm details.
+    Please contact the client within 3 hours to confirm details. 🤝
+    
+    Thank you for using our platform! 💙
     """
     
     email = EmailMessage(
@@ -154,65 +159,6 @@ def send_bid_accepted_notification(bid):
 
     email.send(fail_silently=False)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# def subscribe(request):
-#     headers = {
-#     'Content-Type': 'application/json',
-#     'Authorization': 'Bearer'+' '+settings.BEARER_KEY,
-
-#     }
-
-#     payload = {
-#         "BusinessShortCode": 174379,
-#         "Password": settings.MPESA_PASSWORD,
-#         "Timestamp": "20250401135218",
-#         "TransactionType": "CustomerPayBillOnline",
-#         "Amount": 1,
-#         "PartyA": 254707485760,
-#         "PartyB": 174379,
-#         "PhoneNumber":254703443827,
-#         "CallBackURL": "https://mydomain.com/path",
-#         "AccountReference": "CompanyXLTD",
-#         "TransactionDesc": "Payment of X" 
-#     }
-
-#     response = requests.post(
-#         'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest',
-#         headers=headers,
-#         json=payload  # Use `json` instead of `data` for proper JSON formatting
-#     )
-
-#     try:
-#         response_data = response.json()  # Convert response to JSON
-#     except ValueError:
-#         response_data = {"error": "Invalid response from Safaricom API"}
-
-#     return JsonResponse(response_data)  # Return JSON response to the frontend
-
-
-# Disable CSRF for this endpoint
 @csrf_exempt
 def mpesa_callback(request):
     pass
@@ -235,7 +181,7 @@ def mpesa_callback(request):
     #         phone_number = None
 
     #         # Extract values
-    #         for item in callback_metadata:
+    #         for item in callback_metadata:    
     #             if item["Name"] == "Amount":
     #                 amount = item["Value"]
     #             elif item["Name"] == "MpesaReceiptNumber":

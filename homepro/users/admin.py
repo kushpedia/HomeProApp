@@ -7,3 +7,4 @@ admin.site.register(Rating)
 admin.site.register(Booking)
 admin.site.register(BookingAttachment)
 
+

@@ -170,7 +170,7 @@ def accept_bid(request, bid_id):
         
         
         
-    messages.success(request, f"You've accepted the bid from {bid.provider.full_name} Proceed to payment")
+    messages.success(request, f"You've accepted the bid of {bid.price} Ksh/= from {bid.provider.full_name} Proceed to payment")
     request.session['payment_booking_id'] = str(booking.id)
     request.session['payment_bid_id'] = str(bid.id)
     return redirect('payment_options')
