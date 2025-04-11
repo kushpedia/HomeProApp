@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'services',
     'payment',
     'bids',
+    'breports',
 ]
 
 MIDDLEWARE = [
