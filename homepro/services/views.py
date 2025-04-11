@@ -154,7 +154,7 @@ def book_service(request, service_id):
             # Handle file uploads
 
             if 'attachments' in request.FILES:
-                print("Attachments found")
+                # print("Attachments found")
                 for file in request.FILES.getlist('attachments'):
                     BookingAttachment.objects.create(
                         booking=booking,
@@ -285,7 +285,7 @@ def complete_task(request, booking_id):
                 completion = form.save(commit=False)
                 completion.booking = booking
                 completion.save()
-                
+                completion.provider_notes= request.POST['provider_notes']
                 
                 # Handle multiple image uploads
                 if 'attachments' in request.FILES:

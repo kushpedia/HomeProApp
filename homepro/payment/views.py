@@ -55,12 +55,12 @@ def process_payment(request):
                 # Process payment (implement your payment gateway logic here)
                 if payment_method == 'mpesa':
                     headers = {
-                            'Authorization': 'Bearer '
+                            'Authorization': 'Bearer FdOSb2bmVAqL3JpGi3yifkWusF3j'
                             }
                     payload = {
                         "BusinessShortCode": 174379,
-                        "Password": "",
-                        "Timestamp": "20250410230620",
+                        "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDExMDcwODEz",
+                        "Timestamp": "20250411070813",
                         "TransactionType": "CustomerPayBillOnline",
                         "Amount": bid_amount,
                         "PartyA": 254707485760,
@@ -108,21 +108,6 @@ def process_payment(request):
                     # payment_success = process_card_payment(booking)
                 else:
                     print('Invalid payment method')
-                # if payment_success:
-                #     # Update booking status
-                #     booking.status = 'confirmed'
-                #     booking.save()
-                    
-                    # Send notification only after successful payment
-                    # send_bid_accepted_notification(booking.accepted_bid)
-                    # send_payment_confirmation(booking)
-                    
-                #     messages.success(request, "Payment successful! Your booking is confirmed.")
-                #     return redirect('booking_confirmation', booking.id)
-                # else:
-                #     messages.error(request, "Payment failed. Please try again.")
-                #     return redirect('payment_options')
-                    
         except Exception as e:
             messages.error(request, f"Payment error: {str(e)}")
             return redirect('payment_options')
@@ -163,52 +148,4 @@ def send_bid_accepted_notification(bid):
 @csrf_exempt
 def mpesa_callback(request):
     pass
-    # if request.method == "POST":
-    #     try:
-    #         mpesa_response = json.loads(request.body)
-    #         print("M-Pesa Callback Received:", mpesa_response)  # Debugging
-
-    #         stk_callback = mpesa_response.get('Body', {}).get('stkCallback', {})
-    #         merchant_request_id = stk_callback.get('MerchantRequestID')
-    #         checkout_request_id = stk_callback.get('CheckoutRequestID')
-    #         result_code = stk_callback.get('ResultCode')
-    #         result_desc = stk_callback.get('ResultDesc')
-    #         callback_metadata = stk_callback.get('CallbackMetadata', {}).get('Item', [])
-
-    #         # Initialize fields
-    #         amount = None
-    #         mpesa_receipt_number = None
-    #         transaction_date = None
-    #         phone_number = None
-
-    #         # Extract values
-    #         for item in callback_metadata:    
-    #             if item["Name"] == "Amount":
-    #                 amount = item["Value"]
-    #             elif item["Name"] == "MpesaReceiptNumber":
-    #                 mpesa_receipt_number = item["Value"]
-    #             elif item["Name"] == "TransactionDate":
-    #                 transaction_date = datetime.strptime(str(item["Value"]), "%Y%m%d%H%M%S")
-    #             elif item["Name"] == "PhoneNumber":
-    #                 phone_number = str(item["Value"])
-
-    #         # Save transaction
-    #         MpesaTransaction.objects.create(
-    #             merchant_request_id=merchant_request_id,
-    #             checkout_request_id=checkout_request_id,
-    #             result_code=result_code,
-    #             result_desc=result_desc,
-    #             amount=amount,
-    #             mpesa_receipt_number=mpesa_receipt_number,
-    #             transaction_date=transaction_date,
-    #             phone_number=phone_number
-    #         )
-
-    #         return JsonResponse({"message": "Callback received and saved"}, status=200)
-
-    #     except json.JSONDecodeError:
-    #         return JsonResponse({"error": "Invalid JSON"}, status=400)
-
-    # return JsonResponse({"error": "Invalid request method"}, status=400)
-
-# subscription
+    

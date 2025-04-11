@@ -233,8 +233,12 @@ class BookingAttachment(models.Model):
 class TaskCompletion(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE)
-    completed_at = models.DateTimeField(auto_now_add=True)
-    proof_images = models.ManyToManyField('ProofImage')
+    completed_at = models.DateTimeField(auto_now_add=True)    
+    proof_images = models.ManyToManyField(
+        'ProofImage',
+        blank=True,
+        related_name='related_taskCompletions'
+    )
     provider_notes = models.TextField(blank=True)
     def __str__(self):
         return self.booking.service.name
@@ -242,8 +246,7 @@ class TaskCompletion(models.Model):
 
 class ProofImage(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    file = models.FileField(upload_to='services/booking_attachments/%Y/%m/%d/')  
+    file = models.FileField(upload_to='services/task_completion_attachments/%Y/%m/%d/')  
     task = models.ForeignKey(
         TaskCompletion, 
         on_delete=models.CASCADE,
@@ -253,7 +256,7 @@ class ProofImage(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Attachment for {self.booking.service.name} Requested By {self.booking.user.first_name}"
+        return f"Proof for {self.task.booking.service.name} by {self.task.booking.provider.first_name}"
 
 
 
